@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import Sidebar from '../components/Sidebar';
-import Navbar from '../components/Navbar';
 import Tabs from '../components/Tabs';
 import Table from '../components/Table';
 import Pagination from '../components/Pagination';
@@ -48,16 +46,7 @@ const RatingPage = () => {
   const currentData = dummyData.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-pageBg">
-      <Navbar />
-      
-      <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
-        <Sidebar />
-        
-        {/* Main Content Area */}
-        <div className="flex-1 flex flex-col overflow-hidden p-6">
-          <div className="bg-white rounded shadow-sm border border-borderColor flex flex-col min-h-full">
+    <div className="bg-white rounded shadow-sm border border-borderColor flex flex-col h-full">
             
             {/* Top Controls: Tabs and Actions */}
             <div className="flex items-center justify-between px-2 pt-2 border-b border-borderColor">
@@ -89,9 +78,6 @@ const RatingPage = () => {
               totalPages={totalPages} 
               onPageChange={setCurrentPage} 
             />
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
