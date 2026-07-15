@@ -1,10 +1,12 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 import { cn } from '../utils/cn';
-import { MdDashboard, MdStarRate, MdNotifications, MdPeople, MdPerson } from 'react-icons/md';
+import { MdDashboard, MdStarRate } from 'react-icons/md';
 
-const Sidebar = ({ activeTab }) => {
+const Sidebar = () => {
   const menuItems = [
-    { name: 'Rating', icon: MdStarRate, active: true },
+    { name: 'Dashboard', path: '/dashboard', icon: MdDashboard },
+    { name: 'Rating', path: '/rating', icon: MdStarRate },
   ];
 
   return (
@@ -15,18 +17,18 @@ const Sidebar = ({ activeTab }) => {
             const Icon = item.icon;
             return (
               <li key={item.name} className="px-4 py-1">
-                <a
-                  href="#"
-                  className={cn(
+                <NavLink
+                  to={item.path}
+                  className={({ isActive }) => cn(
                     "flex items-center gap-3 px-4 py-2.5 rounded text-sm font-medium transition-colors",
-                    item.active 
+                    isActive 
                       ? "bg-sidebar-active text-white" 
                       : "text-textColor hover:bg-gray-100"
                   )}
                 >
                   <Icon className="text-xl" />
                   {item.name}
-                </a>
+                </NavLink>
               </li>
             )
           })}
