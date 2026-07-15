@@ -39,8 +39,8 @@ const dummyData = [
   { roadName: 'JUHPL', roadFullName: 'SPV Name : Jammu Udhampur Highway Private limited (JUHPL)', status: 'HO-RATED', dateCreated: '07-Apr-26, 3:35:52 PM', reportedBy: 'Swaraj' }
 ];
 
-const RatingPage = () => {
-  const [activeTab, setActiveTab] = useState('all');
+const RatingPage = ({ activeTab, setActiveTab }) => {
+  const [activeTabInternal, setActiveTabInternal] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
 
   const ITEMS_PER_PAGE = 10;
@@ -53,7 +53,7 @@ const RatingPage = () => {
       
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <Sidebar />
+        <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
         
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col overflow-hidden p-6">
@@ -61,7 +61,7 @@ const RatingPage = () => {
             
             {/* Top Controls: Tabs and Actions */}
             <div className="flex items-center justify-between px-2 pt-2 border-b border-borderColor">
-              <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
+              <Tabs activeTab={activeTabInternal} setActiveTab={setActiveTabInternal} />
               
               <div className="flex items-center gap-6 px-4 pb-2 mb-2">
                 <div className="flex items-center gap-2 text-sm text-primary font-medium uppercase tracking-wide">
