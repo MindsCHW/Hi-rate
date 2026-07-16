@@ -16,8 +16,35 @@ const Navbar = () => {
           <img src={logoText} alt="HiRATE" className="h-5 object-contain" />
         </div>
         <div className="ml-4">
-          <select className="border border-borderColor rounded px-3 py-1 text-sm bg-white focus:outline-none focus:border-primary text-gray-700">
+          <select className="border border-borderColor rounded px-3 py-1 text-sm bg-white focus:outline-none focus:border-primary text-gray-700 max-h-60 overflow-y-auto">
             <option>Choose</option>
+            <option>ADTPL</option>
+            <option>APEL</option>
+            <option>BFHL</option>
+            <option>BWHPL</option>
+            <option>DATL</option>
+            <option>DHMEPL</option>
+            <option>FRHL</option>
+            <option>GAEPL</option>
+            <option>JMTPL</option>
+            <option>JUHPL</option>
+            <option>KETPL</option>
+            <option>KHEPL</option>
+            <option>KMTPL</option>
+            <option>KTIPL</option>
+            <option>MBEL</option>
+            <option>MHPL</option>
+            <option>MKTPL</option>
+            <option>MSHP</option>
+            <option>NAM</option>
+            <option>NDEPL</option>
+            <option>NKTPL</option>
+            <option>SIPL</option>
+            <option>SMTPL</option>
+            <option>SPPL</option>
+            <option>WMPTL</option>
+            <option>WUPTL</option>
+            <option>WVEL</option>
           </select>
         </div>
       </div>

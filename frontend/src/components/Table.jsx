@@ -1,7 +1,15 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Badge from './Badge';
 
 const Table = ({ data }) => {
+  const navigate = useNavigate();
+
+  const handleRowClick = (roadName) => {
+    // Navigate to the road summary page, using lowercase road name as an ID-like parameter
+    navigate(`/rating/${roadName.toLowerCase()}/summary`);
+  };
+
   return (
     <div className="w-full overflow-x-auto">
       <table className="w-full text-sm text-left text-textColor">
@@ -18,7 +26,8 @@ const Table = ({ data }) => {
           {data.map((row, index) => (
             <tr
               key={index}
-              className={`border-b border-gray-100 hover:bg-gray-50 transition-colors ${
+              onClick={() => handleRowClick(row.roadName)}
+              className={`border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer ${
                 index % 2 === 0 ? 'bg-white' : 'bg-[#F4F8FB]'
               }`}
             >

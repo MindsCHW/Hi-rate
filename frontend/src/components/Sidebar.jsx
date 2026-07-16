@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 import { cn } from '../utils/cn';
 import { MdStarRate, MdPerson } from 'react-icons/md';
 
