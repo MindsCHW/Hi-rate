@@ -6,8 +6,12 @@ const RoleSelectorCard = () => {
       <div className="relative w-[300px]">
         <select defaultValue="" className="w-full h-[46px] border border-borderColor rounded-md pl-4 pr-10 text-sm font-bold text-textColor bg-white focus:outline-none focus:border-primary appearance-none cursor-pointer">
           <option value="" disabled hidden>Select Role</option>
-          <option value="admin">Administrator</option>
-          <option value="manager">Manager</option>
+          <option value="ho_ir">HO IR</option>
+          <option value="spv_or">SPV OR</option>
+          <option value="admin">Admin</option>
+          <option value="contractor">Contractor</option>
+          <option value="superuser">Superuser</option>
+          <option value="supervisor">Supervisor</option>
           <option value="user">User</option>
         </select>
         <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-700">

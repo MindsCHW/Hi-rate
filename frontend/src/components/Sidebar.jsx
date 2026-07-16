@@ -1,14 +1,11 @@
 import React from 'react';
 import { cn } from '../utils/cn';
-import { MdDashboard, MdStarRate, MdNotifications, MdPeople, MdPerson } from 'react-icons/md';
+import { MdStarRate, MdPerson } from 'react-icons/md';
 
 const Sidebar = ({ activeTab = 'Role', setActiveTab }) => {
   const menuItems = [
-    { name: 'Dashboard', icon: MdDashboard, id: 'Dashboard' },
     { name: 'Rating', icon: MdStarRate, id: 'Rating' },
-    { name: 'Notification', icon: MdNotifications, id: 'Notification' },
     { name: 'Role', icon: MdPerson, id: 'Role' },
-    { name: 'Users', icon: MdPeople, id: 'Users' },
   ];
 
   return (
