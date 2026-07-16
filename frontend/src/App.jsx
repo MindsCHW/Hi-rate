@@ -1,25 +1,17 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Layout from './components/Layout';
-import DashboardPage from './pages/DashboardPage';
+import React, { useState } from 'react';
 import RatingPage from './pages/RatingPage';
-import RoadSummaryPage from './pages/RoadSummaryPage';
-import RatingDetailPage from './pages/RatingDetailPage';
+import RolePermissionPage from './pages/RolePermissionPage';
 
 function App() {
+  const [activeTab, setActiveTab] = useState('Role');
+
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Navigate to="/dashboard" replace />} />
-          <Route path="dashboard" element={<DashboardPage />} />
-          <Route path="rating" element={<RatingPage />} />
-          <Route path="rating/:roadId/summary" element={<RoadSummaryPage />} />
-          <Route path="rating/:roadId/detail/:pointId" element={<RatingDetailPage />} />
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <>
+      {activeTab === 'Rating' && <RatingPage activeTab={activeTab} setActiveTab={setActiveTab} />}
+      {activeTab === 'Role' && <RolePermissionPage activeTab={activeTab} setActiveTab={setActiveTab} />}
+      {/* Default to RatingPage if tab not found for now */}
+      {activeTab !== 'Rating' && activeTab !== 'Role' && <RatingPage activeTab={activeTab} setActiveTab={setActiveTab} />}
+    </>
   );
 }
 
