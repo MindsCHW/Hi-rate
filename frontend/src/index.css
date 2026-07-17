@@ -9,3 +9,22 @@
     @apply font-inter bg-pageBg text-textColor antialiased;
   }
 }
+
+@layer utilities {
+  .custom-dropdown-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-dropdown-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-dropdown-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-full;
+  }
+  .custom-dropdown-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400;
+  }
+  .custom-dropdown-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #d1d5db transparent;
+  }
+}

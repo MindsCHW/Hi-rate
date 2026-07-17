@@ -6,14 +6,14 @@ import PermissionsCard from '../components/RolePermission/PermissionsCard';
 
 import ActionPermissionCard from '../components/RolePermission/ActionPermissionCard';
 
-const RolePermissionPage = ({ activeTab, setActiveTab }) => {
+const RolePermissionPage = () => {
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-pageBg">
       <Navbar />
       
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+        <Sidebar />
         
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col overflow-y-auto p-6">

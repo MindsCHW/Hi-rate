@@ -2,14 +2,14 @@ import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
 import editedLogo from '../../assets/editedlogo.PNG';
 
-// Helper to determine bottom border color based on status
+// Helper to determine left border color based on status
 const getStatusColor = (status) => {
   switch (status) {
-    case 'ON-GOING': return 'border-green-500';
-    case 'HO-PROCESS': return 'border-blue-500';
-    case 'HO-RATED': return 'border-amber-500';
-    case 'SPV-RATED': return 'border-purple-500';
-    default: return 'border-gray-400';
+    case 'ON-GOING': return 'border-l-green-500';
+    case 'HO-PROCESS': return 'border-l-purple-500';
+    case 'HO-RATED': return 'border-l-amber-500';
+    case 'SPV-RATED': return 'border-l-indigo-500';
+    default: return 'border-l-gray-400';
   }
 };
 
@@ -33,7 +33,7 @@ const CompactRoadCard = ({ data, onHover, onLeave, onClick }) => {
       whileHover={{ scale: 1.08, zIndex: 50 }}
       whileTap={{ scale: 0.95 }}
       transition={{ type: "spring", stiffness: 400, damping: 25 }}
-      className={`relative w-full h-[60px] bg-white rounded-xl shadow-sm hover:shadow-xl hover:ring-2 hover:ring-gray-200/50 transition-shadow duration-300 flex items-center overflow-hidden border-b-[3px] border-t border-l border-r border-gray-100 ${getStatusColor(data.status)} cursor-pointer group`}
+      className={`relative w-full h-[60px] bg-white rounded-xl shadow-sm hover:shadow-xl hover:ring-2 hover:ring-gray-200/50 transition-shadow duration-300 flex items-center overflow-hidden border-t border-r border-b border-gray-100 border-l-[6px] ${getStatusColor(data.status)} cursor-pointer group`}
     >
       {/* Left Icon (Star with road) */}
       <div className="w-[50px] h-full flex items-center justify-center pl-2 z-10 shrink-0">

@@ -19,6 +19,15 @@ export default {
       },
       fontFamily: {
         inter: ['Inter', 'sans-serif'],
+      },
+      keyframes: {
+        traffic: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        }
+      },
+      animation: {
+        'traffic': 'traffic 15s linear infinite',
       }
     },
   },

@@ -4,48 +4,61 @@ import { FaAndroid } from 'react-icons/fa';
 import logo from '../assets/editedlogo.PNG';
 import logoText from '../assets/HIRATE text.PNG';
 
+import CustomDropdown from './common/CustomDropdown';
+
 const Navbar = () => {
+  const [project, setProject] = React.useState('');
+  
+  const projectOptions = [
+    { label: 'ADTPL', value: 'ADTPL' },
+    { label: 'APEL', value: 'APEL' },
+    { label: 'BFHL', value: 'BFHL' },
+    { label: 'BWHPL', value: 'BWHPL' },
+    { label: 'DATL', value: 'DATL' },
+    { label: 'DHMEPL', value: 'DHMEPL' },
+    { label: 'FRHL', value: 'FRHL' },
+    { label: 'GAEPL', value: 'GAEPL' },
+    { label: 'JMTPL', value: 'JMTPL' },
+    { label: 'JUHPL', value: 'JUHPL' },
+    { label: 'KETPL', value: 'KETPL' },
+    { label: 'KHEPL', value: 'KHEPL' },
+    { label: 'KMTPL', value: 'KMTPL' },
+    { label: 'KTIPL', value: 'KTIPL' },
+    { label: 'MBEL', value: 'MBEL' },
+    { label: 'MHPL', value: 'MHPL' },
+    { label: 'MKTPL', value: 'MKTPL' },
+    { label: 'MSHP', value: 'MSHP' },
+    { label: 'NAM', value: 'NAM' },
+    { label: 'NDEPL', value: 'NDEPL' },
+    { label: 'NKTPL', value: 'NKTPL' },
+    { label: 'SIPL', value: 'SIPL' },
+    { label: 'SMTPL', value: 'SMTPL' },
+    { label: 'SPPL', value: 'SPPL' },
+    { label: 'WMPTL', value: 'WMPTL' },
+    { label: 'WUPTL', value: 'WUPTL' },
+    { label: 'WVEL', value: 'WVEL' },
+  ];
+
   return (
     <header className="h-[60px] bg-white border-b border-borderColor flex items-center justify-between px-4 shrink-0">
       <div className="flex items-center gap-4">
-        <button className="p-1 text-gray-600 hover:text-gray-900 focus:outline-none">
+        <button 
+          onClick={() => window.dispatchEvent(new Event('toggle-mobile-sidebar'))}
+          className="p-1 text-gray-600 hover:text-gray-900 focus:outline-none md:hidden"
+        >
           <MdMenu className="text-2xl" />
         </button>
         <div className="flex items-center gap-2">
           <img src={logo} alt="HiRATE Logo" className="w-8 h-8 object-contain" />
           <img src={logoText} alt="HiRATE" className="h-5 object-contain" />
         </div>
-        <div className="ml-4">
-          <select className="border border-borderColor rounded px-3 py-1 text-sm bg-white focus:outline-none focus:border-primary text-gray-700 max-h-60 overflow-y-auto">
-            <option>Choose</option>
-            <option>ADTPL</option>
-            <option>APEL</option>
-            <option>BFHL</option>
-            <option>BWHPL</option>
-            <option>DATL</option>
-            <option>DHMEPL</option>
-            <option>FRHL</option>
-            <option>GAEPL</option>
-            <option>JMTPL</option>
-            <option>JUHPL</option>
-            <option>KETPL</option>
-            <option>KHEPL</option>
-            <option>KMTPL</option>
-            <option>KTIPL</option>
-            <option>MBEL</option>
-            <option>MHPL</option>
-            <option>MKTPL</option>
-            <option>MSHP</option>
-            <option>NAM</option>
-            <option>NDEPL</option>
-            <option>NKTPL</option>
-            <option>SIPL</option>
-            <option>SMTPL</option>
-            <option>SPPL</option>
-            <option>WMPTL</option>
-            <option>WUPTL</option>
-            <option>WVEL</option>
-          </select>
+        <div className="ml-4 w-[200px]">
+          <CustomDropdown
+            options={projectOptions}
+            value={project}
+            onChange={setProject}
+            placeholder="Choose"
+          />
         </div>
       </div>
       <div className="flex items-center gap-6">

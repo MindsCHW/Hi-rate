@@ -1,40 +1,59 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
+import Navbar from '../components/Navbar';
+import Sidebar from '../components/Sidebar';
+import ImageCarousel from '../components/Rating/ImageCarousel';
 
 // Using a placeholder image since we can't extract the uploaded image directly.
 // You can replace this URL with the actual path to your image when you have it.
 const imgUrl = "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
 
 const RatingDetailPage = () => {
+  const location = useLocation();
+  const rowData = location.state || {};
+
   return (
-    <div className="bg-white rounded shadow-sm border border-borderColor p-6 flex flex-col min-h-full overflow-y-auto">
+    <div className="flex flex-col h-screen overflow-hidden bg-[#F8FAFC]">
+      <Navbar />
+      <div className="flex flex-1 overflow-hidden relative">
+        <Sidebar />
+        <div className="flex-1 p-6 overflow-y-auto">
+          <div className="bg-white rounded shadow-sm border border-borderColor p-6 flex flex-col min-h-full overflow-y-auto">
       {/* Header Boxes */}
-      <div className="flex gap-4 mb-8">
-        <div className="border border-borderColor p-3 rounded flex-1 bg-gray-50/30">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-2">
+        <div className="border border-borderColor p-3 rounded bg-gray-50/30">
           <div className="text-xs text-gray-500 mb-1">Category</div>
-          <div className="font-medium text-gray-800">Roadway</div>
+          <div className="font-medium text-gray-800">{rowData.category || 'N/A'}</div>
         </div>
-        <div className="border border-borderColor p-3 rounded flex-1 bg-gray-50/30">
+        <div className="border border-borderColor p-3 rounded bg-gray-50/30">
           <div className="text-xs text-gray-500 mb-1">Asset type</div>
-          <div className="font-medium text-gray-800">Pavement</div>
+          <div className="font-medium text-gray-800">{rowData.assetType || 'N/A'}</div>
         </div>
-        <div className="border border-borderColor p-3 rounded flex-1 bg-gray-50/30">
+        <div className="border border-borderColor p-3 rounded bg-gray-50/30">
           <div className="text-xs text-gray-500 mb-1">Direction</div>
-          <div className="font-medium text-gray-800">RHS</div>
+          <div className="font-medium text-gray-800">{rowData.direction || 'N/A'}</div>
         </div>
-        <div className="border border-borderColor p-3 rounded flex-1 bg-gray-50/30">
+        <div className="border border-borderColor p-3 rounded bg-gray-50/30">
           <div className="text-xs text-gray-500 mb-1">Road Type</div>
-          <div className="font-medium text-gray-800">MCW</div>
+          <div className="font-medium text-gray-800">{rowData.roadType || 'N/A'}</div>
         </div>
-        <div className="border border-borderColor p-3 rounded flex-1 bg-gray-50/30">
-          <div className="text-xs text-gray-500 mb-1">chainage</div>
-          <div className="font-medium text-gray-800">198.16</div>
+        <div className="border border-borderColor p-3 rounded bg-gray-50/30">
+          <div className="text-xs text-gray-500 mb-1">Placement</div>
+          <div className="font-medium text-gray-800">Shoulder</div>
+        </div>
+        <div className="border border-borderColor p-3 rounded bg-gray-50/30">
+          <div className="text-xs text-gray-500 mb-1">Chainage</div>
+          <div className="font-medium text-gray-800">{rowData.chainage || 'N/A'}</div>
         </div>
       </div>
 
-      <h2 className="text-lg font-medium text-center mb-8 border-b pb-2 text-gray-800">Rating Parameters</h2>
+      {/* Images Carousel - Moved Above Rating Parameters */}
+      <ImageCarousel images={[imgUrl, imgUrl, imgUrl]} />
+
+      <h2 className="text-lg font-medium text-center mb-2 mt-0 border-b pb-1 text-gray-800">Rating Parameters</h2>
 
       {/* Parameters Row */}
-      <div className="flex flex-row gap-6 w-full mb-8">
+      <div className="flex flex-col md:flex-row gap-6 w-full mb-0">
         {/* Block 1: Cracks */}
         <div className="flex flex-col border border-borderColor p-4 rounded bg-gray-50/30 shadow-sm flex-1">
           <h3 className="font-medium text-lg mb-4 text-gray-800">Cracks</h3>
@@ -101,17 +120,7 @@ const RatingDetailPage = () => {
           </div>
         </div>
       </div>
-
-      {/* Images Row */}
-      <div className="flex flex-row items-center justify-center gap-6 w-full mt-2">
-        <div className="flex-[2] aspect-video bg-gray-100 rounded overflow-hidden border border-borderColor shadow-sm">
-          <img src={imgUrl} alt="Road snapshot left" className="w-full h-full object-cover" />
-        </div>
-        <div className="flex-[3] aspect-video bg-gray-100 rounded overflow-hidden border border-borderColor shadow-sm">
-          <img src={imgUrl} alt="Road snapshot center" className="w-full h-full object-cover" />
-        </div>
-        <div className="flex-[2] aspect-video bg-gray-100 rounded overflow-hidden border border-borderColor shadow-sm">
-          <img src={imgUrl} alt="Road snapshot right" className="w-full h-full object-cover" />
+          </div>
         </div>
       </div>
     </div>

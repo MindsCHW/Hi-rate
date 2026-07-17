@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { MdClear, MdOutlineFileDownload } from 'react-icons/md';
 import Pagination from '../components/Pagination';
+import Navbar from '../components/Navbar';
+import Sidebar from '../components/Sidebar';
+import SegmentedFilters from '../components/Rating/SegmentedFilters';
+import CustomDropdown from '../components/common/CustomDropdown';
 
 const roadwayData = [
   { status: 'x', typeOfWork: 'Maintenance', category: 'Roadway', assetType: 'Embankment', direction: 'LHS', roadType: 'MCW', chainage: '209.67', date: '09-Jul-26, 11.03.39 AM', reporter: 'Ravi Kumar' },
@@ -88,6 +92,10 @@ const RoadSummaryPage = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState('Roadway');
+  const [direction, setDirection] = useState('Choose Direction');
+  const [roadType, setRoadType] = useState('Choose Road Type');
+  const [paramType, setParamType] = useState('Choose');
+  const [version, setVersion] = useState('38');
   
   let currentData = roadwayData;
   let totalPages = 98;
@@ -111,86 +119,91 @@ const RoadSummaryPage = () => {
     currentData = landscapingData;
     totalPages = 28;
   }
-  const tabs = [
-    'RATING POINTS', 'RATING SUMMARY', 'RATING VERSION HISTORY', 
-    'RATING CHAINAGES', 'ROAD DETAILS', 'ROAD HISTORY'
+  const tabsFilters = [
+    { id: 'RATING POINTS', label: 'RATING POINTS' },
+    { id: 'RATING SUMMARY', label: 'RATING SUMMARY' },
+    { id: 'RATING VERSION HISTORY', label: 'RATING VERSION HISTORY' },
+    { id: 'RATING CHAINAGES', label: 'RATING CHAINAGES' },
+    { id: 'ROAD DETAILS', label: 'ROAD DETAILS' },
+    { id: 'ROAD HISTORY', label: 'ROAD HISTORY' }
   ];
 
+  const [activeTab, setActiveTab] = useState('RATING POINTS');
+
   return (
-    <div className="bg-white rounded shadow-sm border border-borderColor flex flex-col h-full overflow-hidden">
-      
-      {/* Top Tabs */}
-      <div className="flex border-b border-borderColor overflow-x-auto shrink-0">
-        {tabs.map((tab, idx) => (
-          <button 
-            key={idx}
-            className={`px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors ${
-              idx === 0 
-                ? 'bg-primary text-white' 
-                : 'text-primary hover:bg-gray-50'
-            }`}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
+    <div className="flex flex-col h-screen overflow-hidden bg-[#F8FAFC]">
+      <Navbar />
+      <div className="flex flex-1 overflow-hidden relative">
+        <Sidebar />
+        <div className="flex-1 p-6 overflow-y-auto">
+          <div className="bg-white rounded shadow-sm border border-borderColor flex flex-col min-h-full overflow-hidden">
+            
+            {/* Top Tabs */}
+            <div className="flex p-4 border-b border-borderColor overflow-x-auto shrink-0">
+              <SegmentedFilters 
+                filters={tabsFilters} 
+                activeFilter={activeTab} 
+                onFilterChange={setActiveTab} 
+              />
+            </div>
 
       <div className="p-6 flex flex-col flex-1 overflow-hidden">
         {/* Filters */}
         <div className="grid grid-cols-6 gap-4 mb-6 shrink-0">
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">Category :</label>
-            <select 
+            <CustomDropdown
+              options={[
+                'Roadway',
+                'Road Signage and Furniture',
+                'Project Facilities',
+                'Structures',
+                'ATMS',
+                'TMS',
+                'Landscaping'
+              ]}
               value={selectedCategory}
-              onChange={(e) => {
-                setSelectedCategory(e.target.value);
+              onChange={(val) => {
+                setSelectedCategory(val);
                 setCurrentPage(1);
               }}
-              className="w-full border border-borderColor rounded px-3 py-1.5 text-sm bg-white focus:outline-none focus:border-primary text-gray-700"
-            >
-              <option value="Roadway">Roadway</option>
-              <option value="Road Signage and Furniture">Road Signage and Furniture</option>
-              <option value="Project Facilities">Project Facilities</option>
-              <option value="Structures">Structures</option>
-              <option value="ATMS">ATMS</option>
-              <option value="TMS">TMS</option>
-              <option value="Landscaping">Landscaping</option>
-            </select>
+              placeholder="Category"
+            />
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">Min Chainage :</label>
-            <input type="text" placeholder="Enter Chainage" className="w-full border border-borderColor rounded px-3 py-1.5 text-sm focus:outline-none focus:border-primary placeholder:text-gray-400" />
+            <input type="text" placeholder="Enter Chainage" className="w-full border border-[#5cb85c] rounded px-3 py-1.5 text-sm bg-white focus:outline-none focus:border-[#5cb85c] focus:ring-2 focus:ring-[#5cb85c]/20 transition-all" />
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">Max Chainage :</label>
-            <input type="text" placeholder="Enter Chainage" className="w-full border border-borderColor rounded px-3 py-1.5 text-sm focus:outline-none focus:border-primary placeholder:text-gray-400" />
+            <input type="text" placeholder="Enter Chainage" className="w-full border border-[#5cb85c] rounded px-3 py-1.5 text-sm bg-white focus:outline-none focus:border-[#5cb85c] focus:ring-2 focus:ring-[#5cb85c]/20 transition-all" />
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">Direction :</label>
-            <select className="w-full border border-borderColor rounded px-3 py-1.5 text-sm bg-white focus:outline-none focus:border-primary text-gray-400">
-              <option>Choose Direction</option>
-              <option>All</option>
-              <option>LHS</option>
-              <option>RHS</option>
-            </select>
+            <CustomDropdown
+              options={['Choose Direction', 'All', 'LHS', 'RHS']}
+              value={direction}
+              onChange={setDirection}
+              placeholder="Direction"
+            />
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">Road Type :</label>
-            <select className="w-full border border-borderColor rounded px-3 py-1.5 text-sm bg-white focus:outline-none focus:border-primary text-gray-400">
-              <option>Choose Road Type</option>
-              <option>All</option>
-              <option>SR</option>
-              <option>MCW</option>
-            </select>
+            <CustomDropdown
+              options={['Choose Road Type', 'All', 'SR', 'MCW']}
+              value={roadType}
+              onChange={setRoadType}
+              placeholder="Road Type"
+            />
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">Parameter Type :</label>
-            <select className="w-full border border-borderColor rounded px-3 py-1.5 text-sm bg-white focus:outline-none focus:border-primary text-gray-400">
-              <option>Choose</option>
-              <option>Conventional</option>
-              <option>Digital</option>
-              <option>Both</option>
-            </select>
+            <CustomDropdown
+              options={['Choose', 'Conventional', 'Digital', 'Both']}
+              value={paramType}
+              onChange={setParamType}
+              placeholder="Parameter Type"
+            />
           </div>
         </div>
 
@@ -203,9 +216,12 @@ const RoadSummaryPage = () => {
           
           <div className="w-[120px]">
             <label className="block text-xs font-medium text-gray-700 mb-1 text-center">Version:</label>
-            <select className="w-full border border-borderColor rounded px-3 py-1.5 text-sm bg-white focus:outline-none focus:border-primary text-gray-700">
-              <option>38</option>
-            </select>
+            <CustomDropdown
+              options={['38', '37', '36']}
+              value={version}
+              onChange={setVersion}
+              placeholder="Version"
+            />
           </div>
           
           <button className="bg-primary hover:bg-blue-700 text-white font-medium py-1.5 px-6 rounded text-sm transition-colors mb-0.5">
@@ -244,7 +260,7 @@ const RoadSummaryPage = () => {
               {currentData.map((row, index) => (
                 <tr 
                   key={index} 
-                  onClick={() => navigate(`/rating/${roadId || 'roadway'}/detail/${index}`)}
+                  onClick={() => navigate(`/rating/${roadId || 'roadway'}/detail/${index}`, { state: row })}
                   className={`border-b border-gray-100 hover:bg-gray-50/50 cursor-pointer ${index % 2 === 0 ? 'bg-gray-50/30' : 'bg-white'}`}
                 >
                   <td className="px-4 py-3 text-center">
@@ -272,14 +288,17 @@ const RoadSummaryPage = () => {
 
         {/* Pagination at bottom */}
         <div className="shrink-0 pt-4 border-t border-borderColor -mx-6">
-          <Pagination 
-            currentPage={currentPage} 
-            totalPages={totalPages} 
-            onPageChange={setCurrentPage} 
-          />
+            <Pagination 
+              currentPage={currentPage} 
+              totalPages={totalPages} 
+              onPageChange={setCurrentPage} 
+            />
+          </div>
         </div>
       </div>
     </div>
+    </div>
+  </div>
   );
 };
 
