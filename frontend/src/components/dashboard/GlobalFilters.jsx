@@ -1,7 +1,7 @@
 import React from 'react';
 import { MdSearch, MdFilterList } from 'react-icons/md';
 
-const GlobalFilters = () => {
+const GlobalFilters = ({ selectedProject, setSelectedProject }) => {
   return (
     <div className="bg-white/80 backdrop-blur-md border border-borderColor rounded-xl shadow-sm p-4 mb-6 flex flex-wrap items-center gap-4 sticky top-0 z-10">
       <div className="flex items-center gap-2 text-gray-500 font-medium">
@@ -26,7 +26,11 @@ const GlobalFilters = () => {
         <option value="UP">Uttar Pradesh</option>
       </select>
 
-      <select className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-primary text-gray-600 cursor-pointer">
+      <select 
+        value={selectedProject || ''}
+        onChange={(e) => setSelectedProject(e.target.value || null)}
+        className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-primary text-gray-600 cursor-pointer"
+      >
         <option value="">All Projects</option>
         <option value="MKTPL">MKTPL</option>
         <option value="NKTPL">NKTPL</option>
