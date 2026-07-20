@@ -4,6 +4,13 @@ import { cn } from '../utils/cn';
 import { MdStarRate, MdPerson, MdChevronLeft, MdChevronRight, MdClose, MdDashboard, MdContentCopy } from 'react-icons/md';
 import { motion, AnimatePresence } from 'framer-motion';
 
+const projectOptions = [
+  'ADTPL', 'APEL', 'BFHL', 'BWHPL', 'DATL', 'DHMEPL', 'FRHL', 'GAEPL',
+  'JMTPL', 'JUHPL', 'KETPL', 'KHEPL', 'KMTPL', 'KTIPL', 'MBEL', 'MHPL',
+  'MKTPL', 'MSHP', 'NAM', 'NDEPL', 'NKTPL', 'SIPL', 'SMTPL', 'SPPL',
+  'WMPTL', 'WUPTL', 'WVEL'
+];
+
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -13,6 +20,9 @@ const Sidebar = () => {
   
   // Mobile drawer state
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+  // Dropdown menu state (opened on double click)
+  const [openMenu, setOpenMenu] = useState(null);
 
   useEffect(() => {
     const handler = () => setIsMobileOpen(prev => !prev);
@@ -27,13 +37,17 @@ const Sidebar = () => {
     { name: 'Clone Page', icon: MdContentCopy, path: '/demo' },
   ];
 
-  const handleNav = (path) => {
-    navigate(path);
+  const handleNav = (path, proj) => {
+    if (proj) {
+      navigate(`${path}?project=${proj}`);
+    } else {
+      navigate(path);
+    }
     setIsMobileOpen(false); // Close mobile drawer after navigation
   };
 
   // The actual Sidebar content component to render for both Desktop and Mobile
-  const SidebarContent = ({ isMobile }) => (
+  const renderSidebarContent = (isMobile) => (
     <div className={cn(
       "bg-white rounded-[20px] border border-green-500/30 shadow-[0_4px_24px_rgb(0,0,0,0.06)] flex flex-col relative transition-all duration-300",
       isMobile ? "w-64 h-full" : isCollapsed ? "w-[84px] h-[calc(100vh-80px)]" : "w-64 h-[calc(100vh-80px)]"
@@ -61,16 +75,26 @@ const Sidebar = () => {
         </div>
       )}
 
-      <div className="flex-1 py-6 px-3.5 overflow-y-auto overflow-x-hidden">
+      <div className="flex-1 py-6 px-3.5 relative z-50">
         <ul className="flex flex-col gap-3">
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname.startsWith(item.path);
+            const isDashboard = item.name === 'Dashboard';
             
             return (
-              <li key={item.path}>
+              <li 
+                key={item.path} 
+                className="relative"
+              >
                 <button
                   onClick={() => handleNav(item.path)}
+                  onDoubleClick={(e) => {
+                    if (isDashboard) {
+                      e.preventDefault();
+                      setOpenMenu(prev => prev === item.name ? null : item.name);
+                    }
+                  }}
                   className={cn(
                     "flex w-full items-center gap-3.5 px-3 py-3 rounded-[12px] text-sm font-medium transition-all duration-300 border",
                     isActive 
@@ -92,6 +116,45 @@ const Sidebar = () => {
                     {item.name}
                   </span>
                 </button>
+
+                {/* Double-Click Sub-Menu for Dashboard */}
+                <AnimatePresence>
+                  {openMenu === 'Dashboard' && isDashboard && (
+                    <motion.div
+                      initial={{ opacity: 0, x: -10, scale: 0.95 }}
+                      animate={{ opacity: 1, x: 0, scale: 1 }}
+                      exit={{ opacity: 0, x: -10, scale: 0.95 }}
+                      transition={{ duration: 0.2 }}
+                      className={cn(
+                        "absolute z-[100] w-56 bg-white border border-gray-100 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] overflow-hidden",
+                        isMobile ? "left-12 top-14" : "left-[calc(100%+16px)] top-0"
+                      )}
+                    >
+                      <div className="bg-gray-50/80 px-4 py-2.5 border-b border-gray-100 backdrop-blur-sm flex justify-between items-center">
+                        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Select Project</span>
+                        <button onClick={() => setOpenMenu(null)} className="text-gray-400 hover:text-gray-600">
+                          <MdClose className="text-sm" />
+                        </button>
+                      </div>
+                      <div className="max-h-[300px] overflow-y-auto custom-dropdown-scrollbar py-1.5 flex flex-col">
+                        {projectOptions.map(proj => (
+                          <button 
+                            key={proj} 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleNav(item.path, proj);
+                              setOpenMenu(null);
+                            }}
+                            className="text-left px-4 py-2 text-sm text-gray-600 hover:text-green-600 hover:bg-green-50/50 transition-colors relative group"
+                          >
+                            <span className="relative z-10">{proj}</span>
+                            <div className="absolute inset-0 bg-green-50 opacity-0 group-hover:opacity-100 transition-opacity" />
+                          </button>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </li>
             )
           })}
@@ -109,7 +172,7 @@ const Sidebar = () => {
         transition={{ duration: 0.3, ease: "easeInOut" }}
         className="shrink-0 hidden md:flex items-center justify-center pl-4 pr-1 relative"
       >
-        <SidebarContent isMobile={false} />
+        {renderSidebarContent(false)}
       </motion.div>
 
       {/* Mobile Drawer Overlay */}
@@ -130,7 +193,7 @@ const Sidebar = () => {
               transition={{ type: "spring", bounce: 0, duration: 0.4 }}
               className="relative p-4 h-full"
             >
-              <SidebarContent isMobile={true} />
+              {renderSidebarContent(true)}
             </motion.div>
           </div>
         )}
