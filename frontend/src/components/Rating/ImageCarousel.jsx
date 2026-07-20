@@ -3,20 +3,24 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MdFullscreen, MdClose, MdZoomIn, MdZoomOut, MdRotateRight, MdRotateLeft, MdChevronLeft, MdChevronRight } from 'react-icons/md';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 
-const ImageCarousel = ({ images = [] }) => {
-  const [currentIndex, setCurrentIndex] = useState(Math.min(1, images.length - 1));
+const ImageCarousel = ({ images = [], activeIndex, onIndexChange, isEditMode = false, onEscape }) => {
+  const currentIndex = activeIndex !== undefined ? activeIndex : Math.max(0, Math.min(1, images.length - 1));
   const [fullScreenIndex, setFullScreenIndex] = useState(null);
   
   // Fullscreen specific states
   const [rotation, setRotation] = useState(0);
 
   const nextImage = useCallback(() => {
-    setCurrentIndex((prev) => Math.min(prev + 1, images.length - 1));
-  }, [images.length]);
+    if (onIndexChange) {
+      onIndexChange(Math.min(currentIndex + 1, images.length - 1));
+    }
+  }, [currentIndex, images.length, onIndexChange]);
 
   const prevImage = useCallback(() => {
-    setCurrentIndex((prev) => Math.max(prev - 1, 0));
-  }, []);
+    if (onIndexChange) {
+      onIndexChange(Math.max(currentIndex - 1, 0));
+    }
+  }, [currentIndex, onIndexChange]);
 
   // Fullscreen navigation
   const nextFsImage = useCallback((e) => {
@@ -42,13 +46,14 @@ const ImageCarousel = ({ images = [] }) => {
         if (e.key === 'ArrowRight') nextFsImage();
         if (e.key === 'ArrowLeft') prevFsImage();
       } else {
+        if (e.key === 'Escape' && onEscape) onEscape();
         if (e.key === 'ArrowRight') nextImage();
         if (e.key === 'ArrowLeft') prevImage();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [nextImage, prevImage, fullScreenIndex, nextFsImage, prevFsImage]);
+  }, [nextImage, prevImage, fullScreenIndex, nextFsImage, prevFsImage, onEscape]);
 
   // Handle swipe gestures
   const [touchStart, setTouchStart] = useState(null);

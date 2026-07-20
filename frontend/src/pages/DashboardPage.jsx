@@ -1,6 +1,9 @@
 import React from 'react';
 import DashboardChart from '../components/DashboardChart';
-import { MdRefresh } from 'react-icons/md';
+import { Link } from 'react-router-dom';
+import { MdRefresh, MdDashboard } from 'react-icons/md';
+import Navbar from '../components/Navbar';
+import Sidebar from '../components/Sidebar';
 
 const updatesData = [
   { roadName: 'MKTPL', user: 'Thatipally Manoj Kumar', action: '"Physical Condition" Parameter hoRating edit...', date: '15-Jul-26, 10:47 AM' },
@@ -12,8 +15,15 @@ const updatesData = [
 
 const DashboardPage = () => {
   return (
-    <div className="flex flex-col h-full overflow-hidden">
-      <div className="flex gap-6 h-full">
+    <div className="flex flex-col h-screen overflow-hidden bg-[#F8FAFC]">
+      <Navbar />
+      <div className="flex flex-1 overflow-hidden relative">
+        <Sidebar />
+        
+        <div className="flex-1 overflow-y-auto p-8 pt-6 relative scroll-smooth">
+          <div className="max-w-[1800px] mx-auto w-full h-full flex flex-col">
+            
+            <div className="flex gap-6 flex-1 min-h-0">
         {/* Left Column - Roads Status */}
         <div className="w-[400px] shrink-0 bg-white border border-borderColor rounded shadow-sm flex flex-col p-6">
           <h2 className="text-gray-500 font-bold text-sm tracking-wide mb-8 uppercase">Roads Status</h2>
@@ -62,6 +72,9 @@ const DashboardPage = () => {
             <button className="bg-primary hover:bg-blue-700 text-white font-medium py-1.5 px-4 rounded text-sm transition-colors">
               All History
             </button>
+          </div>
+        </div>
+            </div>
           </div>
         </div>
       </div>

@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { MdMenu, MdAccountCircle } from 'react-icons/md';
 import { FaAndroid } from 'react-icons/fa';
 import logo from '../assets/editedlogo.PNG';
@@ -8,6 +9,8 @@ import CustomDropdown from './common/CustomDropdown';
 
 const Navbar = () => {
   const [project, setProject] = React.useState('');
+  const navigate = useNavigate();
+  const location = useLocation();
   
   const projectOptions = [
     { label: 'ADTPL', value: 'ADTPL' },
@@ -39,6 +42,25 @@ const Navbar = () => {
     { label: 'WVEL', value: 'WVEL' },
   ];
 
+  useEffect(() => {
+    const pathParts = location.pathname.split('/');
+    if (pathParts.length >= 3 && pathParts[1] === 'rating') {
+      const roadId = pathParts[2].toUpperCase();
+      if (projectOptions.some(opt => opt.value === roadId)) {
+        setProject(roadId);
+      }
+    } else {
+      setProject('');
+    }
+  }, [location.pathname]);
+
+  const handleProjectChange = (value) => {
+    setProject(value);
+    if (value) {
+      navigate(`/rating/${value}`);
+    }
+  };
+
   return (
     <header className="h-[60px] bg-white border-b border-borderColor flex items-center justify-between px-4 shrink-0">
       <div className="flex items-center gap-4">
@@ -56,7 +78,7 @@ const Navbar = () => {
           <CustomDropdown
             options={projectOptions}
             value={project}
-            onChange={setProject}
+            onChange={handleProjectChange}
             placeholder="Choose"
           />
         </div>

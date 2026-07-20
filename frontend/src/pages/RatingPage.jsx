@@ -148,6 +148,10 @@ const RatingPage = () => {
   const dur5 = val5 * durationPerVehicle + durationBase;
   const delay5 = delay4 + dur4 + 0.15;
 
+  const val6 = dummyData.filter(d => d.status === 'HO-PROCESS').length;
+  const dur6 = val6 * durationPerVehicle + durationBase;
+  const delay6 = delay5 + dur5 + 0.15;
+
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-[#F8FAFC]">
       <Navbar />
@@ -175,12 +179,13 @@ const RatingPage = () => {
           <div className="max-w-[1800px] mx-auto w-full">
             
             {/* Quick Stats Section */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
               <StatCard title="Total Roads" value={val1} icon={RoadIcon} colorClass="bg-blue-500" delay={delay1} duration={dur1} />
               <StatCard title="HO Rated" value={val2} icon={ClipboardCheckIcon} colorClass="bg-green-500" delay={delay2} duration={dur2} />
               <StatCard title="Pending" value={val3} icon={HourglassIcon} colorClass="bg-orange-500" delay={delay3} duration={dur3} />
               <StatCard title="SPV Rated" value={val4} icon={StarIcon} colorClass="bg-indigo-500" delay={delay4} duration={dur4} />
               <StatCard title="In Progress" value={val5} icon={BarrierIcon} colorClass="bg-purple-500" delay={delay5} duration={dur5} />
+              <StatCard title="HO Process" value={val6} icon={HourglassIcon} colorClass="bg-teal-500" delay={delay6} duration={dur6} />
             </div>
 
             {/* Controls Bar */}
@@ -192,7 +197,7 @@ const RatingPage = () => {
             {/* High Density Cards Grid */}
             {filteredData.length > 0 ? (
               <motion.div 
-                className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 pb-20"
+                className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 gap-5 pb-20"
                 initial="hidden"
                 animate="visible"
                 variants={{

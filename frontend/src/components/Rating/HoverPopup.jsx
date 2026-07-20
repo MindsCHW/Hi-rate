@@ -3,6 +3,17 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MdStar, MdStarBorder, MdArrowForward } from 'react-icons/md';
 import editedLogo from '../../assets/editedlogo.PNG';
 
+const spvLogos = import.meta.glob('../../assets/spv names/*.png', { eager: true });
+
+const getSpvLogo = (roadName) => {
+  const name = roadName ? roadName.toLowerCase() : '';
+  const key = `../../assets/spv names/${name}-1.png`;
+  if (spvLogos[key]) {
+    return spvLogos[key].default;
+  }
+  return editedLogo;
+};
+
 const HoverPopup = ({ data, anchorRect }) => {
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const [isVisible, setIsVisible] = useState(false);
@@ -58,7 +69,7 @@ const HoverPopup = ({ data, anchorRect }) => {
           <div className="p-5 pb-3 flex gap-3 items-start border-b border-gray-100">
             {/* Star Icon Logo */}
             <div className="w-10 h-10 shrink-0 relative flex items-center justify-center">
-              <img src={editedLogo} alt="Logo" className="w-full h-full object-contain drop-shadow-sm" />
+              <img src={getSpvLogo(data.roadName)} alt="Logo" className="w-full h-full object-contain drop-shadow-sm" />
             </div>
             
             <div className="flex-1">

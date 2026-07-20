@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '../utils/cn';
-import { MdStarRate, MdPerson, MdChevronLeft, MdChevronRight, MdClose, MdDashboard } from 'react-icons/md';
+import { MdStarRate, MdPerson, MdChevronLeft, MdChevronRight, MdClose, MdDashboard, MdContentCopy } from 'react-icons/md';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Sidebar = () => {
@@ -24,6 +24,7 @@ const Sidebar = () => {
     { name: 'Dashboard', icon: MdDashboard, path: '/dashboard' },
     { name: 'Rating', icon: MdStarRate, path: '/rating' },
     { name: 'Role', icon: MdPerson, path: '/role' },
+    { name: 'Clone Page', icon: MdContentCopy, path: '/demo' },
   ];
 
   const handleNav = (path) => {
@@ -42,9 +43,9 @@ const Sidebar = () => {
       {!isMobile && (
         <button 
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="absolute top-6 -right-3.5 w-7 h-7 bg-white border border-green-500/30 rounded-full flex items-center justify-center text-gray-400 hover:text-green-500 hover:border-green-500 z-10 shadow-sm transition-colors cursor-pointer"
+          className="absolute top-4 -right-[20px] w-5 h-10 bg-white border border-green-500/30 border-l-0 rounded-r-full flex items-center justify-center text-gray-400 hover:text-green-500 hover:border-green-500 z-10 transition-colors cursor-pointer -translate-x-px"
         >
-          {isCollapsed ? <MdChevronRight className="text-xl" /> : <MdChevronLeft className="text-xl" />}
+          {isCollapsed ? <MdChevronRight className="text-xl -ml-1" /> : <MdChevronLeft className="text-xl -ml-1" />}
         </button>
       )}
 

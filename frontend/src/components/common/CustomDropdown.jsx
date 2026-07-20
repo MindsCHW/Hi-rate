@@ -8,7 +8,8 @@ const CustomDropdown = ({
   onChange, 
   placeholder = 'Select an option', 
   className = '',
-  disabled = false
+  disabled = false,
+  direction = 'down'
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -78,6 +79,8 @@ const CustomDropdown = ({
     setIsOpen(false);
   };
 
+  const isUp = direction === 'up';
+
   return (
     <div 
       className={`relative w-full ${className}`} 
@@ -100,7 +103,7 @@ const CustomDropdown = ({
           {selectedOption ? selectedOption.label : placeholder}
         </span>
         <motion.div
-          animate={{ rotate: isOpen ? 180 : 0 }}
+          animate={{ rotate: isOpen ? (isUp ? -180 : 180) : 0 }}
           transition={{ duration: 0.25, ease: "easeInOut" }}
           className={`flex-shrink-0 ml-2 ${isOpen ? 'text-[#5cb85c]' : 'text-gray-400'}`}
         >
@@ -111,11 +114,11 @@ const CustomDropdown = ({
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -10, scale: 0.98 }}
+            initial={{ opacity: 0, y: isUp ? 10 : -10, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -10, scale: 0.98 }}
+            exit={{ opacity: 0, y: isUp ? 10 : -10, scale: 0.98 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="absolute z-[100] w-full mt-1.5 bg-white border border-gray-100 rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.12)] overflow-hidden"
+            className={`absolute z-[100] w-full ${isUp ? 'bottom-full mb-1.5' : 'mt-1.5'} bg-white border border-gray-100 rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.12)] overflow-hidden`}
           >
             <ul 
               className="max-h-60 overflow-y-auto py-1 custom-dropdown-scrollbar focus:outline-none"

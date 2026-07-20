@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { MdClear, MdOutlineFileDownload } from 'react-icons/md';
 import Pagination from '../components/Pagination';
@@ -95,7 +95,17 @@ const RoadSummaryPage = () => {
   const [direction, setDirection] = useState('Choose Direction');
   const [roadType, setRoadType] = useState('Choose Road Type');
   const [paramType, setParamType] = useState('Choose');
-  const [version, setVersion] = useState('38');
+  const [version, setVersion] = useState('Jul 26');
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        navigate(-1);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [navigate]);
   
   let currentData = roadwayData;
   let totalPages = 98;
@@ -210,34 +220,34 @@ const RoadSummaryPage = () => {
         {/* Actions */}
         <div className="flex items-end justify-center gap-6 mb-6 shrink-0">
           <div className="flex items-center gap-2 mb-1">
-            <input type="checkbox" id="concerned" className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary" />
+            <input type="checkbox" id="concerned" className="w-4 h-4 rounded border-gray-300 text-[#5cb85c] focus:ring-[#5cb85c] accent-[#5cb85c]" />
             <label htmlFor="concerned" className="text-sm font-medium text-gray-700">Concerned Items</label>
           </div>
           
           <div className="w-[120px]">
             <label className="block text-xs font-medium text-gray-700 mb-1 text-center">Version:</label>
             <CustomDropdown
-              options={['38', '37', '36']}
+              options={['Jul 26', 'Jun 26', 'May 26', 'Apr 26']}
               value={version}
               onChange={setVersion}
               placeholder="Version"
             />
           </div>
           
-          <button className="bg-primary hover:bg-blue-700 text-white font-medium py-1.5 px-6 rounded text-sm transition-colors mb-0.5">
+          <button className="bg-[#5cb85c] hover:bg-green-600 text-white font-medium py-1.5 px-6 rounded text-sm transition-colors mb-0.5">
             Get Ratings
           </button>
           
-          <button className="flex items-center gap-2 border border-primary text-primary hover:bg-blue-50 font-medium py-1.5 px-4 rounded text-sm transition-colors mb-0.5">
+          <button className="flex items-center gap-2 border-2 border-[#5cb85c] text-[#5cb85c] hover:bg-green-50 font-medium py-1.5 px-4 rounded text-sm transition-colors mb-0.5">
             <MdOutlineFileDownload className="text-lg" />
             Generate CSV
           </button>
         </div>
 
         {/* Data Table */}
-        <div className="flex-1 overflow-auto min-h-0 border-t border-borderColor">
+        <div className="flex-1 overflow-auto min-h-0 border-t border-[#5cb85c]/40">
           <table className="w-full text-sm text-left">
-            <thead className="text-xs text-gray-500 uppercase bg-white sticky top-0 border-b border-borderColor">
+            <thead className="text-xs text-[#5cb85c] uppercase bg-green-50/50 sticky top-0 border-b border-[#5cb85c]/40">
               <tr>
                 <th className="px-4 py-3 font-medium text-center">STATUS</th>
                 <th className="px-4 py-3 font-medium">TYPE OF WORK</th>
@@ -261,7 +271,7 @@ const RoadSummaryPage = () => {
                 <tr 
                   key={index} 
                   onClick={() => navigate(`/rating/${roadId || 'roadway'}/detail/${index}`, { state: row })}
-                  className={`border-b border-gray-100 hover:bg-gray-50/50 cursor-pointer ${index % 2 === 0 ? 'bg-gray-50/30' : 'bg-white'}`}
+                  className={`border-b border-[#5cb85c]/20 hover:bg-green-50/50 cursor-pointer ${index % 2 === 0 ? 'bg-white' : 'bg-[#5cb85c]/[0.02]'}`}
                 >
                   <td className="px-4 py-3 text-center">
                     <MdClear className="text-red-500 text-lg mx-auto" />

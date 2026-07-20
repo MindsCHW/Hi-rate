@@ -5,12 +5,14 @@ import RolePermissionPage from './pages/RolePermissionPage';
 import RoadSummaryPage from './pages/RoadSummaryPage';
 import RatingDetailPage from './pages/RatingDetailPage';
 import DashboardPage from './pages/DashboardPage';
+import ClonePage from './pages/ClonePage';
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
       <Route path="/dashboard" element={<DashboardPage />} />
+      <Route path="/demo" element={<ClonePage />} />
       <Route path="/rating" element={<RatingPage />} />
       <Route path="/role" element={<RolePermissionPage />} />
       <Route path="/rating/:roadId" element={<RoadSummaryPage />} />
