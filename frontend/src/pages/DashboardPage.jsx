@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import GlobalFilters from '../components/dashboard/GlobalFilters';
@@ -10,10 +11,20 @@ import AnalyticsCharts from '../components/dashboard/AnalyticsCharts';
 import InspectorLeaderboard from '../components/dashboard/InspectorLeaderboard';
 import RecentActivityTimeline from '../components/dashboard/RecentActivityTimeline';
 import ProjectMap from '../components/ProjectMap';
+import DashboardChart from '../components/DashboardChart';
 import { projectCoordinates } from '../data/projectCoordinates';
 
 const DashboardPage = () => {
-  const [selectedProject, setSelectedProject] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedProject = searchParams.get('project');
+
+  const setSelectedProject = (project) => {
+    if (project) {
+      setSearchParams({ project });
+    } else {
+      setSearchParams({});
+    }
+  };
 
   // If a project is selected, we can get its coordinates for ProjectMap
   const coordinates = selectedProject ? projectCoordinates[selectedProject] : null;
@@ -36,6 +47,18 @@ const DashboardPage = () => {
             {!selectedProject ? (
               // ALL PROJECTS VIEW
               <div className="flex flex-col gap-6">
+                
+                {/* Roads Status original view */}
+                <div className="w-full bg-white border border-borderColor rounded shadow-sm flex flex-col p-6 mb-6">
+                  <h2 className="text-gray-500 font-bold text-sm tracking-wide mb-8 uppercase">Roads Status</h2>
+                  <div className="flex-1 flex flex-col items-center justify-center -mt-8">
+                    <DashboardChart />
+                    <div className="text-center mt-2">
+                      <span className="font-bold text-gray-700 text-lg">Total Roads : 16</span>
+                    </div>
+                  </div>
+                </div>
+
                 <ExecutiveCards />
                 
                 <div className="mt-4">

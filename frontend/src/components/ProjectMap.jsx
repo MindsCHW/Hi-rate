@@ -86,7 +86,10 @@ const ProjectMap = ({ project, coordinates }) => {
               <div className="p-1">
                 <h3 className="font-bold text-gray-800 text-sm border-b pb-1 mb-1">{point.title}</h3>
                 <p className={`text-xs font-medium ${point.rating === 1 ? 'text-red-600' : point.rating === 5 ? 'text-orange-600' : 'text-green-600'}`}>Rating: {point.rating}</p>
-                <button className="mt-2 text-xs bg-primary text-white px-2 py-1 rounded w-full hover:bg-blue-600">
+                <button 
+                  onClick={() => window.location.href = `/rating/${project}`}
+                  className="mt-2 text-xs bg-primary text-white px-2 py-1 rounded w-full hover:bg-blue-600"
+                >
                   View Details
                 </button>
               </div>
