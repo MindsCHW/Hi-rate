@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { MdMenu, MdAccountCircle } from 'react-icons/md';
-import { FaAndroid } from 'react-icons/fa';
+import { MdMenu, MdAccountCircle, MdCloudDownload, MdNotifications } from 'react-icons/md';
 import logo from '../assets/editedlogo.PNG';
 import logoText from '../assets/HIRATE text.PNG';
 
@@ -84,11 +83,13 @@ const Navbar = () => {
         </div>
       </div>
       <div className="flex items-center gap-6">
-        <button className="flex items-center gap-2 text-primary font-medium text-sm hover:underline">
-          <FaAndroid className="text-lg" />
-          Download APP
+        <button className="text-green-800 hover:text-green-700 transition-colors" title="Notifications">
+          <MdNotifications className="text-3xl" />
         </button>
-        <button className="text-gray-500 hover:text-gray-700">
+        <button className="text-green-800 hover:text-green-700 transition-colors" title="Download App">
+          <MdCloudDownload className="text-3xl" />
+        </button>
+        <button className="text-green-800 hover:text-green-700 transition-colors" title="Profile">
           <MdAccountCircle className="text-3xl" />
         </button>
       </div>

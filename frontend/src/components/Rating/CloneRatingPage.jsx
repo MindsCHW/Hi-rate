@@ -80,24 +80,19 @@ const CloneRatingPage = ({ rowData = {}, config }) => {
   };
 
   const getCurrentData = () => {
-    const pageData = globalReviewData[currentPageIndex] || {};
-    return pageData[activeImageIndex] || getInitialState();
+    return globalReviewData[currentPageIndex] || getInitialState();
   };
 
   const updateCurrentData = (field, updater) => {
     setGlobalReviewData(prev => {
-      const pageData = prev[currentPageIndex] || {};
-      const current = pageData[activeImageIndex] || getInitialState();
+      const current = prev[currentPageIndex] || getInitialState();
       
       const currentValue = current[field];
       const nextValue = typeof updater === 'function' ? updater(currentValue) : updater;
       
       return {
         ...prev,
-        [currentPageIndex]: {
-          ...pageData,
-          [activeImageIndex]: { ...current, [field]: nextValue }
-        }
+        [currentPageIndex]: { ...current, [field]: nextValue }
       };
     });
   };
@@ -277,6 +272,8 @@ const CloneRatingPage = ({ rowData = {}, config }) => {
                                   value={val}
                                   checked={ratings[key] === val}
                                   onChange={(e) => setRatings(prev => ({ ...prev, [key]: e.target.value }))}
+                                  onKeyDown={(e) => e.preventDefault()}
+                                  onClick={(e) => e.target.blur()}
                                   className={`w-5 h-5 border-gray-300 ${colorClass} cursor-pointer`} 
                                 />
                                 <span className="text-base font-semibold text-gray-600 group-hover:text-gray-900">{val}</span>
