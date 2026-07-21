@@ -6,12 +6,15 @@ import { motion } from 'framer-motion';
 import { projectCoordinates } from '../data/projectCoordinates';
 import ProjectMap from '../components/ProjectMap';
 import DashboardChart from '../components/DashboardChart';
+import { MdCalendarToday, MdDirectionsCar, MdLocationCity, MdChevronRight } from 'react-icons/md';
+import logoText from '../assets/HIRATE text.PNG';
 
 import GlobalFilters from '../components/dashboard/GlobalFilters';
 import KPICards from '../components/dashboard/KPICards';
 import AnalyticsCharts from '../components/dashboard/AnalyticsCharts';
 import InspectorLeaderboard from '../components/dashboard/InspectorLeaderboard';
 import RecentActivityTimeline from '../components/dashboard/RecentActivityTimeline';
+import LogoCarousel from '../components/dashboard/LogoCarousel';
 import AllProjectsMap from '../components/dashboard/AllProjectsMap';
 
 import ExecutiveCards from '../components/dashboard/ExecutiveCards';
@@ -37,10 +40,12 @@ const DashboardPage = () => {
         <Sidebar />
         <div className="flex-1 p-4 lg:p-6 overflow-y-auto flex flex-col custom-scrollbar">
           
-          <GlobalFilters 
-            selectedProject={selectedProject} 
-            setSelectedProject={setSelectedProject} 
-          />
+          <div className="relative z-50">
+            <GlobalFilters 
+              selectedProject={selectedProject} 
+              setSelectedProject={setSelectedProject} 
+            />
+          </div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -51,19 +56,33 @@ const DashboardPage = () => {
               // GLOBAL VIEW - EXECUTIVE SUMMARY
               <div className="bg-white p-4 shadow-sm border border-gray-300 rounded mb-10">
                 {/* Header */}
-                <div className="flex items-center justify-between bg-green-800 text-white p-3 rounded-t mb-4">
-                  <div className="flex items-center gap-4">
-                    <div className="bg-white p-1 rounded">
-                      <span className="text-green-800 font-bold text-xl px-2">HiRATE</span>
+                <div className="relative flex items-center justify-between bg-white border border-gray-100 rounded-[18px] mb-6 shadow-[0_10px_40px_rgba(0,0,0,0.08)] overflow-hidden h-[110px]">
+                  
+                  {/* Background Diagonal SVG */}
+                  <svg className="absolute left-0 top-0 h-full w-[260px]" preserveAspectRatio="none" viewBox="0 0 260 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 0H180L130 80H0V0Z" fill="#166534"/>
+                    <path d="M180 0H220L170 80H130L180 0Z" fill="#bbf7d0" opacity="0.6"/>
+                  </svg>
+
+                  <div className="flex items-center relative z-10 w-full h-full pr-8">
+                    {/* Logo Box container to match diagonal green width */}
+                    <div className="w-[170px] flex justify-center shrink-0">
+                      <div className="bg-white px-3 py-1.5 rounded shadow-sm flex items-center justify-center">
+                         <img src={logoText} alt="HiRATE" className="h-[22px] object-contain" />
+                      </div>
                     </div>
-                    <div className="border-l border-white pl-4">
-                      <h1 className="text-xl font-bold uppercase tracking-wide">Monthly Performance Summary</h1>
-                      <p className="text-sm text-green-200">MAY 2026</p>
+
+                    {/* Title */}
+                    <div className="hidden sm:flex flex-col justify-center border-l-[1.5px] border-green-800/10 pl-5 h-full ml-4 py-1 shrink-0">
+                      <h1 className="text-[15px] font-bold text-[#0f172a] uppercase tracking-wide leading-none">Monthly Performance Summary</h1>
+                      <div className="flex items-center gap-1.5 text-xs text-gray-500 font-medium mt-1.5">
+                        <MdCalendarToday className="text-green-600" />
+                        May 2026
+                      </div>
+                      <div className="w-12 h-[2px] bg-green-500 mt-1.5 rounded-full"></div>
                     </div>
-                  </div>
-                  <div className="flex gap-4">
-                    <span className="text-lg font-bold bg-white text-gray-800 px-3 py-1 rounded">CUBEHIGHWAYS</span>
-                    <span className="text-lg font-bold bg-white text-green-600 px-3 py-1 rounded">CUBETECH</span>
+
+                    <LogoCarousel />
                   </div>
                 </div>
 
@@ -81,7 +100,7 @@ const DashboardPage = () => {
                   <div className="flex-1 flex flex-col items-center justify-center -mt-8">
                     <DashboardChart />
                     <div className="text-center mt-2">
-                      <span className="font-bold text-gray-700 text-lg">Total Roads : 16</span>
+                      <span className="font-bold text-gray-700 text-lg">Total Roads : 27</span>
                     </div>
                   </div>
                 </div>
