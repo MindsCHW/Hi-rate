@@ -4,9 +4,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MdOutlineMap, MdOutlineCheckCircle, MdOutlineHourglassEmpty, MdOutlineTrendingUp, MdStarRate } from 'react-icons/md';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
-import Tabs from '../components/Tabs';
-import Table from '../components/Table';
-import Pagination from '../components/Pagination';
+import StatCard from '../components/Rating/StatCard';
+import SegmentedFilters from '../components/Rating/SegmentedFilters';
+import SearchBar from '../components/Rating/SearchBar';
+import CompactRoadCard from '../components/Rating/CompactRoadCard';
+import EmptyState from '../components/Rating/EmptyState';
+import HoverPopup from '../components/Rating/HoverPopup';
 import { MdKeyboardArrowDown, MdOutlineFileDownload } from 'react-icons/md';
 import { dummyData } from '../data/ratingData';
 
@@ -106,12 +109,12 @@ const RatingPage = () => {
             
             {/* Quick Stats Section */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-              <StatCard title="Total Roads" value={val1} icon={RoadIcon} colorClass="bg-blue-500" delay={delay1} duration={dur1} />
-              <StatCard title="HO Rated" value={val2} icon={ClipboardCheckIcon} colorClass="bg-green-500" delay={delay2} duration={dur2} />
-              <StatCard title="Pending" value={val3} icon={HourglassIcon} colorClass="bg-orange-500" delay={delay3} duration={dur3} />
-              <StatCard title="SPV Rated" value={val4} icon={StarIcon} colorClass="bg-indigo-500" delay={delay4} duration={dur4} />
-              <StatCard title="In Progress" value={val5} icon={BarrierIcon} colorClass="bg-purple-500" delay={delay5} duration={dur5} />
-              <StatCard title="HO Process" value={val6} icon={HourglassIcon} colorClass="bg-teal-500" delay={delay6} duration={dur6} />
+              <StatCard title="Total Roads" value={val1} icon={MdOutlineMap} colorClass="bg-blue-500" delay={delay1} duration={dur1} />
+              <StatCard title="HO Rated" value={val2} icon={MdOutlineCheckCircle} colorClass="bg-green-500" delay={delay2} duration={dur2} />
+              <StatCard title="Pending" value={val3} icon={MdOutlineHourglassEmpty} colorClass="bg-orange-500" delay={delay3} duration={dur3} />
+              <StatCard title="SPV Rated" value={val4} icon={MdStarRate} colorClass="bg-indigo-500" delay={delay4} duration={dur4} />
+              <StatCard title="In Progress" value={val5} icon={MdOutlineTrendingUp} colorClass="bg-purple-500" delay={delay5} duration={dur5} />
+              <StatCard title="HO Process" value={val6} icon={MdOutlineHourglassEmpty} colorClass="bg-teal-500" delay={delay6} duration={dur6} />
             </div>
 
             {/* Controls Bar */}

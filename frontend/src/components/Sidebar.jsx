@@ -2,15 +2,17 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '../utils/cn';
 import { MdStarRate } from 'react-icons/md';
-import { LuUsers, LuBell, LuSettings } from 'react-icons/lu';
+import { LuUsers, LuBell, LuSettings, LuLayoutDashboard, LuUserCheck } from 'react-icons/lu';
 
 const Sidebar = () => {
   const location = useLocation();
 
   const menuItems = [
+    { name: 'Dashboard', icon: LuLayoutDashboard, path: '/dashboard' },
     { name: 'Rating', icon: MdStarRate, path: '/' },
-    { name: 'User Management', icon: LuUsers, path: '/user-management' },
     { name: 'Notification', icon: LuBell, path: '/notification', subtext: 'Work Assignment' },
+    { name: 'Role', icon: LuUserCheck, path: '/role' },
+    { name: 'Users', icon: LuUsers, path: '/user-management' },
   ];
 
   const handleNav = (path, proj) => {
