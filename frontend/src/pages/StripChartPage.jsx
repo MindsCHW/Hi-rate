@@ -151,10 +151,13 @@ const StripChartPage = () => {
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
   const [selectedIssue, setSelectedIssue] = useState(null);
   const [activeImage, setActiveImage] = useState(null);
+  
+  // Segmented chainage navigation state (configurable default 20 Km)
+  const SEGMENT_SIZE = 20;
+  const [currentSegmentIndex, setCurrentSegmentIndex] = useState(0);
 
   const activeRoadDetails = dummyData.find(d => d.roadName === selectedRoad);
 
-  
   // Retrieve issues dynamically based on selected road
   const allRoadIssues = getRoadIssues(selectedRoad);
   
@@ -165,6 +168,20 @@ const StripChartPage = () => {
   const maxChainage = Math.max(...allRoadIssues.map(i => i.chainage), 150);
   const roadLengthKm = Math.ceil(maxChainage + 30);
 
+  // Derived segmented chainage variables
+  const startKm = currentSegmentIndex * SEGMENT_SIZE;
+  const endKm = Math.min(roadLengthKm, (currentSegmentIndex + 1) * SEGMENT_SIZE);
+  const totalSegments = Math.ceil(roadLengthKm / SEGMENT_SIZE) || 1;
+  const segmentIssues = filteredIssues.filter(issue => issue.chainage >= startKm && issue.chainage <= endKm);
+
+  // Calculate segment ticks dynamically (5 ticks per range)
+  const ticks = [];
+  const tickCount = 5;
+  for (let i = 0; i < tickCount; i++) {
+    const tickVal = startKm + (i * (endKm - startKm)) / (tickCount - 1);
+    ticks.push(+(tickVal.toFixed(1)));
+  }
+
   const totalIssuesCount = filteredIssues.length;
   const criticalIssuesCount = filteredIssues.filter(i => i.severity === 'Critical').length;
   const pendingReviewCount = filteredIssues.filter(i => i.status === 'Pending' || i.status === 'Pending Review' || i.status === 'Under Review').length;
@@ -172,10 +189,11 @@ const StripChartPage = () => {
   const hoRatedCount = filteredIssues.filter(i => i.status === 'Completed' || i.status === 'HO-RATED').length;
   const noIssuesCount = Math.max(0, roadLengthKm - totalIssuesCount);
 
-  // Close drawer if road selection changes
+  // Close drawer and reset segment index if road or category changes
   useEffect(() => {
     setSelectedIssue(null);
-  }, [selectedRoad]);
+    setCurrentSegmentIndex(0);
+  }, [selectedRoad, selectedCategory]);
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-gray-100 relative">
@@ -303,9 +321,32 @@ const StripChartPage = () => {
 
           {/* Interactive Horizontal Strip Chart */}
           <div className="bg-white p-6 border border-gray-200 rounded-2xl shadow-sm flex flex-col space-y-4">
-            <div>
-              <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wide">Horizontal Chainage Strip Chart</h3>
-              <p className="text-xs text-gray-400 mt-0.5">Defect markers are plotted dynamically along the project timeline relative to their chainage.</p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wide">Horizontal Chainage Strip Chart</h3>
+                <p className="text-xs text-gray-400 mt-0.5">Defect markers are plotted dynamically along the project timeline relative to their chainage.</p>
+              </div>
+
+              {/* Navigation Controls */}
+              <div className="flex items-center gap-3 bg-gray-50 border border-gray-200 px-3.5 py-1.5 rounded-full shadow-sm text-xs font-bold text-gray-700 self-start sm:self-auto shrink-0 select-none">
+                <button
+                  disabled={currentSegmentIndex === 0}
+                  onClick={() => setCurrentSegmentIndex(prev => prev - 1)}
+                  className="px-3 py-1 rounded-full bg-white hover:bg-gray-100 border border-gray-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-95 flex items-center gap-1"
+                >
+                  ◀ Previous
+                </button>
+                <span className="text-gray-600 font-bold min-w-[90px] text-center">
+                  Segment {currentSegmentIndex + 1} / {totalSegments}
+                </span>
+                <button
+                  disabled={currentSegmentIndex >= totalSegments - 1}
+                  onClick={() => setCurrentSegmentIndex(prev => prev + 1)}
+                  className="px-3 py-1 rounded-full bg-white hover:bg-gray-100 border border-gray-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-95 flex items-center gap-1"
+                >
+                  Next ▶
+                </button>
+              </div>
             </div>
 
             <div className="w-full overflow-x-auto pb-4 custom-scrollbar">
@@ -313,61 +354,77 @@ const StripChartPage = () => {
                 
                 {/* Length labels */}
                 <div className="w-full flex justify-between text-xs font-bold text-gray-400 mb-6 px-1">
-                  <span>0 Km</span>
+                  <div>
+                    <span className="text-gray-500 font-bold mr-1">Viewing Chainage:</span>
+                    <span className="text-green-400">{startKm} Km – {endKm} Km</span>
+                  </div>
                   <span className="text-blue-400">Road Project: {selectedRoad} ({selectedCategory})</span>
-                  <span>{roadLengthKm} Km</span>
+                  <div>
+                    <span className="text-gray-500 font-bold mr-1">Page:</span>
+                    <span>{currentSegmentIndex + 1} of {totalSegments}</span>
+                  </div>
                 </div>
 
                 {/* Road strip container */}
-                <div className="w-full h-12 bg-slate-800 border-y border-slate-700 relative flex items-center rounded-sm">
+                <div className="w-full h-12 bg-slate-800 border-y border-slate-700 relative flex items-center rounded-sm overflow-hidden">
                   
                   {/* Dashed highway center lane divider */}
                   <div className="w-full border-t-2 border-dashed border-yellow-500/50 absolute top-1/2 -translate-y-1/2 pointer-events-none" />
                   
-                  {/* Markers plotted along relative chainage */}
-                  {filteredIssues.map((issue) => {
-                    const positionPercent = (issue.chainage / roadLengthKm) * 100;
-                    const configColor = getAssetColor(issue.assetType);
-                    const markerSymbol = getAssetSymbol(issue.assetType);
+                  {/* Markers plotted along relative chainage with horizontal slide transition */}
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={currentSegmentIndex}
+                      initial={{ opacity: 0, x: 60 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -60 }}
+                      transition={{ duration: 0.25, ease: 'easeOut' }}
+                      className="absolute inset-0 flex items-center"
+                    >
+                      {segmentIssues.map((issue) => {
+                        const range = endKm - startKm || 1;
+                        const positionPercent = ((issue.chainage - startKm) / range) * 100;
+                        const configColor = getAssetColor(issue.assetType);
+                        const markerSymbol = getAssetSymbol(issue.assetType);
 
-                    return (
-                      <div
-                        key={issue.id}
-                        onClick={() => setSelectedIssue(issue)}
-                        style={{ left: `${positionPercent}%` }}
-                        className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 group cursor-pointer z-10 flex flex-col items-center"
-                      >
-                        {/* Interactive pulsing circular/shaped dot */}
-                        <div className={`w-8 h-8 rounded-lg ${configColor} ring-4 ring-white/10 flex items-center justify-center shadow-lg transition-transform hover:scale-125 duration-200 active:scale-95 relative`}>
-                          <div className={`absolute inset-0 rounded-lg ${configColor} animate-ping opacity-30`} />
-                          <span className="text-white text-sm font-extrabold">{markerSymbol}</span>
-                        </div>
+                        return (
+                          <div
+                            key={issue.id}
+                            onClick={() => setSelectedIssue(issue)}
+                            style={{ left: `${positionPercent}%` }}
+                            className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 group cursor-pointer z-10 flex flex-col items-center"
+                          >
+                            {/* Interactive pulsing circular/shaped dot */}
+                            <div className={`w-8 h-8 rounded-lg ${configColor} ring-4 ring-white/10 flex items-center justify-center shadow-lg transition-transform hover:scale-125 duration-200 active:scale-95 relative`}>
+                              <div className={`absolute inset-0 rounded-lg ${configColor} animate-ping opacity-30`} />
+                              <span className="text-white text-sm font-extrabold">{markerSymbol}</span>
+                            </div>
 
-                        {/* Tooltip on hover */}
-                        <div className="absolute bottom-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-slate-950 text-white border border-slate-800 text-[10px] py-1.5 px-3 rounded-lg whitespace-nowrap shadow-xl pointer-events-none z-30 flex flex-col items-center">
-                          <span className="font-bold">{issue.title}</span>
-                          <span className="text-gray-400 mt-0.5">Km {issue.chainage.toFixed(3)} • {issue.severity}</span>
-                          <div className="w-2 h-2 bg-slate-950 rotate-45 absolute -bottom-1 border-r border-b border-slate-800" />
-                        </div>
+                            {/* Tooltip on hover */}
+                            <div className="absolute bottom-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-slate-950 text-white border border-slate-800 text-[10px] py-1.5 px-3 rounded-lg whitespace-nowrap shadow-xl pointer-events-none z-30 flex flex-col items-center">
+                              <span className="font-bold">{issue.title}</span>
+                              <span className="text-gray-400 mt-0.5">Km {issue.chainage.toFixed(3)} • {issue.severity}</span>
+                              <div className="w-2 h-2 bg-slate-950 rotate-45 absolute -bottom-1 border-r border-b border-slate-800" />
+                            </div>
 
-                        {/* Bottom label displaying dynamic issue specs inline */}
-                        <div className="absolute top-10 whitespace-nowrap text-center flex flex-col items-center leading-normal">
-                          <span className="text-[10px] font-extrabold text-slate-300">Km {issue.chainage}</span>
-                          <span className="text-[9px] font-bold text-slate-400 mt-0.5">{issue.assetType}</span>
-                          <span className="text-[8px] font-medium text-slate-500 truncate max-w-[110px]">{issue.subCategory}</span>
-                        </div>
-                      </div>
-                    );
-                  })}
+                            {/* Bottom label displaying dynamic issue specs inline */}
+                            <div className="absolute top-10 whitespace-nowrap text-center flex flex-col items-center leading-normal">
+                              <span className="text-[10px] font-extrabold text-slate-300">Km {issue.chainage}</span>
+                              <span className="text-[9px] font-bold text-slate-400 mt-0.5">{issue.assetType}</span>
+                              <span className="text-[8px] font-medium text-slate-500 truncate max-w-[110px]">{issue.subCategory}</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </motion.div>
+                  </AnimatePresence>
                 </div>
 
                 {/* Grid ticks below road */}
                 <div className="w-full flex justify-between text-[10px] text-gray-500 font-bold mt-12 px-1">
-                  <span>0 Km</span>
-                  <span>{Math.floor(roadLengthKm * 0.25)} Km</span>
-                  <span>{Math.floor(roadLengthKm * 0.5)} Km</span>
-                  <span>{Math.floor(roadLengthKm * 0.75)} Km</span>
-                  <span>{roadLengthKm} Km</span>
+                  {ticks.map((t, idx) => (
+                    <span key={idx}>{t} Km</span>
+                  ))}
                 </div>
 
                 {filteredIssues.length === 0 && (
