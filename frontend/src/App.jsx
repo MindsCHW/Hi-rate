@@ -14,8 +14,9 @@ function App() {
     <Routes>
       <Route path="/dashboard" element={<DashboardPage />} />
       <Route path="/" element={<RatingPage />} />
-      <Route path="/rating-detail" element={<RatingDetailPage />} />
-      <Route path="/road-summary" element={<RoadSummaryPage />} />
+      <Route path="/rating/:roadId" element={<RoadSummaryPage />} />
+      <Route path="/rating/:roadId/summary" element={<RoadSummaryPage />} />
+      <Route path="/rating/:roadId/detail/:pointId" element={<RatingDetailPage />} />
       <Route path="/notification" element={<NotificationPage />} />
       <Route path="/role" element={<RolePermissionPage />} />
       <Route path="/user-management" element={<UserManagementPage />} />
