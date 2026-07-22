@@ -4,8 +4,7 @@ import Sidebar from '../components/Sidebar';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { dummyData } from '../data/ratingData';
-import { ResponsiveContainer, ComposedChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
-import { MdTrendingUp, MdFilterList, MdOutlineInfo, MdClose, MdWarning, MdArrowForward } from 'react-icons/md';
+import { MdFilterList, MdOutlineInfo, MdClose, MdWarning, MdArrowForward } from 'react-icons/md';
 
 const categories = [
   "Roadway",
@@ -106,24 +105,7 @@ const getRoadIssues = (roadName) => {
   return generated;
 };
 
-// Composed chart data generator
-const generateMockChartData = (road, category) => {
-  const seed = road.charCodeAt(0) + category.charCodeAt(0);
-  const data = [];
-  for (let km = 100; km <= 112; km++) {
-    const cracksScore = +(3 + Math.sin(km + seed) * 1.5 + Math.cos(km * 0.5) * 0.5).toFixed(1);
-    const ruttingScore = +(2.8 + Math.cos(km + seed) * 1.2 + Math.sin(km * 0.4) * 0.6).toFixed(1);
-    const potholesScore = +(3.2 + Math.sin(km * 0.8 + seed) * 1.0).toFixed(1);
-    
-    data.push({
-      chainage: `Km ${km}`,
-      Cracks: Math.min(5, Math.max(1, cracksScore)),
-      Rutting: Math.min(5, Math.max(1, ruttingScore)),
-      Potholes: Math.min(5, Math.max(1, potholesScore))
-    });
-  }
-  return data;
-};
+
 
 // Color mapping based on severity
 const severityColors = {
@@ -171,7 +153,7 @@ const StripChartPage = () => {
   const [activeImage, setActiveImage] = useState(null);
 
   const activeRoadDetails = dummyData.find(d => d.roadName === selectedRoad);
-  const chartData = generateMockChartData(selectedRoad, selectedCategory);
+
   
   // Retrieve issues dynamically based on selected road
   const allRoadIssues = getRoadIssues(selectedRoad);
@@ -182,6 +164,13 @@ const StripChartPage = () => {
   // Calculate road length dynamically based on issues or default to a reasonable max
   const maxChainage = Math.max(...allRoadIssues.map(i => i.chainage), 150);
   const roadLengthKm = Math.ceil(maxChainage + 30);
+
+  const totalIssuesCount = filteredIssues.length;
+  const criticalIssuesCount = filteredIssues.filter(i => i.severity === 'Critical').length;
+  const pendingReviewCount = filteredIssues.filter(i => i.status === 'Pending' || i.status === 'Pending Review' || i.status === 'Under Review').length;
+  const spvRatedCount = filteredIssues.filter(i => i.status === 'In Progress' || i.status === 'SPV-RATED').length;
+  const hoRatedCount = filteredIssues.filter(i => i.status === 'Completed' || i.status === 'HO-RATED').length;
+  const noIssuesCount = Math.max(0, roadLengthKm - totalIssuesCount);
 
   // Close drawer if road selection changes
   useEffect(() => {
@@ -397,42 +386,56 @@ const StripChartPage = () => {
             </div>
           </div>
 
-          {/* Continuous Condition Profile Composed Chart */}
-          <div className="bg-white p-6 border border-gray-200 rounded-2xl shadow-sm flex flex-col">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wide">Continuous Rating Condition Plot</h3>
-                <p className="text-xs text-gray-400 mt-0.5">Continuous condition index (1.0 to 5.0 scale) at 1 Km intervals.</p>
-              </div>
-              <div className="flex items-center gap-1.5 text-xs text-green-600 font-bold bg-green-50 px-2.5 py-1 rounded-md">
-                <MdTrendingUp />
-                <span>Live Composed Feed</span>
-              </div>
+          {/* Issue Summary Section */}
+          <div className="bg-white p-6 border border-gray-200 rounded-2xl shadow-sm flex flex-col space-y-5">
+            <div>
+              <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wide">Issue Summary</h3>
+              <p className="text-xs text-gray-400 mt-0.5">Quick overview of all recorded issues for the selected Project and Category.</p>
             </div>
 
-            {selectedCategory === 'Roadway' ? (
-              <div className="w-full h-[320px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <ComposedChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                    <CartesianGrid stroke="#f1f5f9" strokeDasharray="3 3" />
-                    <XAxis dataKey="chainage" tick={{ fontSize: 11, fill: '#64748b', fontWeight: 500 }} />
-                    <YAxis domain={[0, 5]} ticks={[0, 1, 2, 3, 4, 5]} tick={{ fontSize: 11, fill: '#64748b', fontWeight: 500 }} />
-                    <Tooltip contentStyle={{ borderRadius: '12px', borderColor: '#e2e8f0', fontSize: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }} />
-                    <Legend verticalAlign="top" height={36} wrapperStyle={{ fontSize: '12px', fontWeight: 500 }} />
-                    
-                    <Bar dataKey="Cracks" fill="#3b82f6" radius={[4, 4, 0, 0]} maxBarSize={28} />
-                    <Bar dataKey="Rutting" fill="#10b981" radius={[4, 4, 0, 0]} maxBarSize={28} />
-                    <Bar dataKey="Potholes" fill="#f59e0b" radius={[4, 4, 0, 0]} maxBarSize={28} />
-                  </ComposedChart>
-                </ResponsiveContainer>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+              {/* Total Issues */}
+              <div className="bg-slate-50/50 border border-slate-200 rounded-2xl p-4 flex flex-col relative overflow-hidden group hover:shadow-md transition-shadow">
+                <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Total Issues</span>
+                <span className="text-2xl font-extrabold text-slate-800 mt-2">{totalIssuesCount}</span>
+                <div className="absolute -bottom-4 -right-4 w-12 h-12 bg-slate-200/20 rounded-full animate-pulse" />
               </div>
-            ) : (
-              <div className="w-full h-[320px] flex flex-col items-center justify-center border border-dashed border-gray-200 rounded-xl bg-gray-50/50 p-6 text-center">
-                <MdOutlineInfo className="text-gray-400 text-3xl mb-2" />
-                <h4 className="text-sm font-semibold text-gray-700">No distress metrics available</h4>
-                <p className="text-xs text-gray-400 mt-1 max-w-sm">Pavement distress rating profiles (Cracks, Rutting, Potholes) are only visualized for the Roadway asset category.</p>
+
+              {/* Critical Issues */}
+              <div className="bg-red-50/40 border border-red-100 rounded-2xl p-4 flex flex-col relative overflow-hidden group hover:shadow-md transition-shadow">
+                <span className="text-[10px] text-red-500 font-bold uppercase tracking-wider">Critical Issues</span>
+                <span className="text-2xl font-extrabold text-red-600 mt-2">{criticalIssuesCount}</span>
+                <div className="absolute -bottom-4 -right-4 w-12 h-12 bg-red-200/20 rounded-full" />
               </div>
-            )}
+
+              {/* Pending Review */}
+              <div className="bg-amber-50/40 border border-amber-100 rounded-2xl p-4 flex flex-col relative overflow-hidden group hover:shadow-md transition-shadow">
+                <span className="text-[10px] text-amber-500 font-bold uppercase tracking-wider">Pending Review</span>
+                <span className="text-2xl font-extrabold text-amber-600 mt-2">{pendingReviewCount}</span>
+                <div className="absolute -bottom-4 -right-4 w-12 h-12 bg-amber-200/20 rounded-full" />
+              </div>
+
+              {/* SPV Rated */}
+              <div className="bg-purple-50/40 border border-purple-100 rounded-2xl p-4 flex flex-col relative overflow-hidden group hover:shadow-md transition-shadow">
+                <span className="text-[10px] text-purple-500 font-bold uppercase tracking-wider">SPV Rated</span>
+                <span className="text-2xl font-extrabold text-purple-600 mt-2">{spvRatedCount}</span>
+                <div className="absolute -bottom-4 -right-4 w-12 h-12 bg-purple-200/20 rounded-full" />
+              </div>
+
+              {/* HO Rated */}
+              <div className="bg-emerald-50/40 border border-emerald-100 rounded-2xl p-4 flex flex-col relative overflow-hidden group hover:shadow-md transition-shadow">
+                <span className="text-[10px] text-emerald-500 font-bold uppercase tracking-wider">HO Rated</span>
+                <span className="text-2xl font-extrabold text-emerald-600 mt-2">{hoRatedCount}</span>
+                <div className="absolute -bottom-4 -right-4 w-12 h-12 bg-emerald-200/20 rounded-full" />
+              </div>
+
+              {/* No Issues */}
+              <div className="bg-green-50/40 border border-green-100 rounded-2xl p-4 flex flex-col relative overflow-hidden group hover:shadow-md transition-shadow">
+                <span className="text-[10px] text-green-500 font-bold uppercase tracking-wider">No Issues</span>
+                <span className="text-2xl font-extrabold text-green-600 mt-2">{noIssuesCount}</span>
+                <div className="absolute -bottom-4 -right-4 w-12 h-12 bg-green-200/20 rounded-full" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
