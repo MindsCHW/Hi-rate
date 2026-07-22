@@ -8,11 +8,13 @@ import NotificationPage from './pages/NotificationPage';
 import RolePermissionPage from './pages/RolePermissionPage';
 import UserManagementPage from './pages/UserManagementPage';
 import ClonePage from './pages/ClonePage';
+import StripChartPage from './pages/StripChartPage';
 
 function App() {
   return (
     <Routes>
       <Route path="/dashboard" element={<DashboardPage />} />
+      <Route path="/dashboard/strip-chart" element={<StripChartPage />} />
       <Route path="/" element={<RatingPage />} />
       <Route path="/rating/:roadId" element={<RoadSummaryPage />} />
       <Route path="/rating/:roadId/summary" element={<RoadSummaryPage />} />
