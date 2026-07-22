@@ -7,6 +7,7 @@ import { ResponsiveContainer, ComposedChart, Bar, Line, XAxis, YAxis, Tooltip, L
 import { MdTrendingUp, MdFilterList, MdOutlineInfo, MdClose, MdWarning, MdArrowForward } from 'react-icons/md';
 
 const categories = [
+  "Pavement",
   "Roadway",
   "Road Signage and Furniture",
   "Project Facilities",
@@ -89,17 +90,15 @@ const generateMockChartData = (road, category) => {
   const seed = road.charCodeAt(0) + category.charCodeAt(0);
   const data = [];
   for (let km = 100; km <= 112; km++) {
-    const pavementScore = +(3 + Math.sin(km + seed) * 1.5 + Math.cos(km * 0.5) * 0.5).toFixed(1);
-    const shoulderScore = +(2.8 + Math.cos(km + seed) * 1.2 + Math.sin(km * 0.4) * 0.6).toFixed(1);
-    const drainageScore = +(3.2 + Math.sin(km * 0.8 + seed) * 1.0).toFixed(1);
-    const overallAverage = +((pavementScore + shoulderScore + drainageScore) / 3).toFixed(1);
+    const cracksScore = +(3 + Math.sin(km + seed) * 1.5 + Math.cos(km * 0.5) * 0.5).toFixed(1);
+    const ruttingScore = +(2.8 + Math.cos(km + seed) * 1.2 + Math.sin(km * 0.4) * 0.6).toFixed(1);
+    const potholesScore = +(3.2 + Math.sin(km * 0.8 + seed) * 1.0).toFixed(1);
     
     data.push({
       chainage: `Km ${km}`,
-      Pavement: Math.min(5, Math.max(1, pavementScore)),
-      Shoulder: Math.min(5, Math.max(1, shoulderScore)),
-      Drainage: Math.min(5, Math.max(1, drainageScore)),
-      Average: Math.min(5, Math.max(1, overallAverage))
+      Cracks: Math.min(5, Math.max(1, cracksScore)),
+      Rutting: Math.min(5, Math.max(1, ruttingScore)),
+      Potholes: Math.min(5, Math.max(1, potholesScore))
     });
   }
   return data;
@@ -296,22 +295,29 @@ const StripChartPage = () => {
               </div>
             </div>
 
-            <div className="w-full h-[320px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <ComposedChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <CartesianGrid stroke="#f1f5f9" strokeDasharray="3 3" />
-                  <XAxis dataKey="chainage" tick={{ fontSize: 11, fill: '#64748b', fontWeight: 500 }} />
-                  <YAxis domain={[0, 5]} ticks={[0, 1, 2, 3, 4, 5]} tick={{ fontSize: 11, fill: '#64748b', fontWeight: 500 }} />
-                  <Tooltip contentStyle={{ borderRadius: '12px', borderColor: '#e2e8f0', fontSize: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }} />
-                  <Legend verticalAlign="top" height={36} wrapperStyle={{ fontSize: '12px', fontWeight: 500 }} />
-                  
-                  <Bar dataKey="Pavement" fill="#3b82f6" radius={[4, 4, 0, 0]} maxBarSize={28} />
-                  <Bar dataKey="Shoulder" fill="#10b981" radius={[4, 4, 0, 0]} maxBarSize={28} />
-                  <Bar dataKey="Drainage" fill="#f59e0b" radius={[4, 4, 0, 0]} maxBarSize={28} />
-                  <Line type="monotone" dataKey="Average" stroke="#ef4444" strokeWidth={3} dot={{ r: 4, strokeWidth: 1 }} activeDot={{ r: 6 }} />
-                </ComposedChart>
-              </ResponsiveContainer>
-            </div>
+            {selectedCategory === 'Pavement' || selectedCategory === 'Roadway' ? (
+              <div className="w-full h-[320px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <ComposedChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <CartesianGrid stroke="#f1f5f9" strokeDasharray="3 3" />
+                    <XAxis dataKey="chainage" tick={{ fontSize: 11, fill: '#64748b', fontWeight: 500 }} />
+                    <YAxis domain={[0, 5]} ticks={[0, 1, 2, 3, 4, 5]} tick={{ fontSize: 11, fill: '#64748b', fontWeight: 500 }} />
+                    <Tooltip contentStyle={{ borderRadius: '12px', borderColor: '#e2e8f0', fontSize: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }} />
+                    <Legend verticalAlign="top" height={36} wrapperStyle={{ fontSize: '12px', fontWeight: 500 }} />
+                    
+                    <Bar dataKey="Cracks" fill="#3b82f6" radius={[4, 4, 0, 0]} maxBarSize={28} />
+                    <Bar dataKey="Rutting" fill="#10b981" radius={[4, 4, 0, 0]} maxBarSize={28} />
+                    <Bar dataKey="Potholes" fill="#f59e0b" radius={[4, 4, 0, 0]} maxBarSize={28} />
+                  </ComposedChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <div className="w-full h-[320px] flex flex-col items-center justify-center border border-dashed border-gray-200 rounded-xl bg-gray-50/50 p-6 text-center">
+                <MdOutlineInfo className="text-gray-400 text-3xl mb-2" />
+                <h4 className="text-sm font-semibold text-gray-700">No distress metrics available</h4>
+                <p className="text-xs text-gray-400 mt-1 max-w-sm">Pavement distress rating profiles (Cracks, Rutting, Potholes) are only visualized for the Pavement or Roadway asset categories.</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
