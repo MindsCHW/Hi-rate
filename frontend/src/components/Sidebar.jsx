@@ -10,9 +10,6 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [isDashboardExpanded, setIsDashboardExpanded] = useState(() => 
-    location.pathname.startsWith('/dashboard')
-  );
 
   const menuItems = [
     { name: 'Dashboard', icon: LuLayoutDashboard, path: '/dashboard' },
@@ -66,74 +63,48 @@ const Sidebar = () => {
             const Icon = item.icon;
             
             if (item.name === 'Dashboard') {
-              const active = location.pathname.startsWith('/dashboard');
+              const active = location.pathname === '/dashboard';
               return (
                 <li key={item.name} className="px-4 py-1">
-                  <button
-                    onClick={() => setIsDashboardExpanded(!isDashboardExpanded)}
+                  <Link
+                    to="/dashboard"
+                    onClick={() => {
+                      if (isMobile) setIsMobileOpen(false);
+                    }}
                     className={cn(
-                      "w-full flex items-center justify-between px-4 py-2.5 rounded text-sm font-medium transition-colors cursor-pointer outline-none",
-                      active 
+                      "w-full flex items-center px-4 py-2.5 rounded text-sm font-medium transition-colors outline-none",
+                      active && isCollapsed
                         ? "bg-sidebar-active text-white" 
                         : "text-textColor hover:bg-gray-100"
                     )}
                   >
                     <div className="flex items-center gap-3">
                       <Icon className="text-xl shrink-0" />
-                      {!isCollapsed && <span>{item.name}</span>}
+                      {!isCollapsed && <span className="font-semibold text-gray-700">{item.name}</span>}
                     </div>
-                    {!isCollapsed && (
-                      <span className="text-[10px] ml-auto">
-                        {isDashboardExpanded ? '▼' : '▶'}
-                      </span>
-                    )}
-                  </button>
+                  </Link>
                   
-                  {/* Expandable Submenu */}
+                  {/* Static Submenu containing Dashboard Overview only */}
                   {!isCollapsed && (
-                    <motion.div
-                      initial={false}
-                      animate={{ height: isDashboardExpanded ? 'auto' : 0 }}
-                      transition={{ duration: 0.25, ease: "easeInOut" }}
-                      className="overflow-hidden"
-                    >
-                      <ul className="flex flex-col gap-1 mt-1.5 pl-4">
-                        <li>
-                          <Link
-                            to="/dashboard"
-                            onClick={() => {
-                              if (isMobile) setIsMobileOpen(false);
-                            }}
-                            className={cn(
-                              "flex items-center gap-2.5 px-4 py-2 rounded text-xs font-semibold transition-colors",
-                              location.pathname === '/dashboard'
-                                ? "bg-sidebar-active text-white font-bold"
-                                : "text-textColor hover:bg-gray-100"
-                            )}
-                          >
-                            <span className="text-[8px]">•</span>
-                            <span>Dashboard Overview</span>
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            to="/dashboard/strip-chart"
-                            onClick={() => {
-                              if (isMobile) setIsMobileOpen(false);
-                            }}
-                            className={cn(
-                              "flex items-center gap-2.5 px-4 py-2 rounded text-xs font-semibold transition-colors",
-                              location.pathname === '/dashboard/strip-chart'
-                                ? "bg-sidebar-active text-white font-bold"
-                                : "text-textColor hover:bg-gray-100"
-                            )}
-                          >
-                            <span className="text-[8px]">•</span>
-                            <span>Strip Chart</span>
-                          </Link>
-                        </li>
-                      </ul>
-                    </motion.div>
+                    <ul className="flex flex-col gap-1 mt-1 pl-4">
+                      <li>
+                        <Link
+                          to="/dashboard"
+                          onClick={() => {
+                            if (isMobile) setIsMobileOpen(false);
+                          }}
+                          className={cn(
+                            "flex items-center gap-2.5 px-4 py-2 rounded text-xs font-semibold transition-colors",
+                            location.pathname === '/dashboard'
+                              ? "bg-sidebar-active text-white font-bold"
+                              : "text-textColor hover:bg-gray-100"
+                          )}
+                        >
+                          <span className="text-[8px]">•</span>
+                          <span>Dashboard Overview</span>
+                        </Link>
+                      </li>
+                    </ul>
                   )}
                 </li>
               );
