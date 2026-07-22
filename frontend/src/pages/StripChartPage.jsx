@@ -16,6 +16,16 @@ const categories = [
   "Landscaping"
 ];
 
+const categoryAssetTypes = {
+  "Roadway": ["Kerb", "Drainage", "Shoulder", "Embankment", "Pavement", "Vegetation"],
+  "Road Signage and Furniture": ["Pavement Markings", "Traffic Signs", "Blinkers", "Lighting", "Delineators", "Hectometer Stones", "MBCB"],
+  "Project Facilities": ["Bus Bay", "Toilet Block", "Truck Lay-by"],
+  "Structures": ["Major Bridge", "Minor Bridge", "Culvert", "ROB"],
+  "ATMS": ["VMS", "MET", "PTZ", "AVCC", "Incident Camera"],
+  "TMS": ["SWB", "WIM", "LPIC", "Traffic Lights", "UFD", "OHLS", "UI"],
+  "Landscaping": ["Vegetation", "Lawn", "Trees"]
+};
+
 // Pre-seeded specific issue data for some main roads
 const roadIssuesData = {
   APFI: [
@@ -113,8 +123,22 @@ const severityColors = {
 const StripChartPage = () => {
   const [selectedRoad, setSelectedRoad] = useState(dummyData[0].roadName);
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
+  const [selectedAssetType, setSelectedAssetType] = useState(() => {
+    const types = categoryAssetTypes[categories[0]] || [];
+    return types[0] || '';
+  });
   const [selectedIssue, setSelectedIssue] = useState(null);
   const [activeImage, setActiveImage] = useState(null);
+
+  // Sync selectedAssetType when selectedCategory changes
+  useEffect(() => {
+    const types = categoryAssetTypes[selectedCategory] || [];
+    if (types.length > 0) {
+      setSelectedAssetType(types[0]);
+    } else {
+      setSelectedAssetType('');
+    }
+  }, [selectedCategory]);
 
   const activeRoadDetails = dummyData.find(d => d.roadName === selectedRoad);
   const chartData = generateMockChartData(selectedRoad, selectedCategory);
@@ -257,6 +281,32 @@ const StripChartPage = () => {
               </div>
             </div>
           )}
+
+          {/* Selectable Asset Types Card */}
+          <div className="bg-white p-6 border border-gray-200 rounded-2xl shadow-sm flex flex-col space-y-3">
+            <div>
+              <span className="text-[10px] text-gray-400 font-bold uppercase block leading-none">Select Asset Type</span>
+              <p className="text-xs text-gray-500 mt-1">Select an asset type to inspect specific highway components and logged issues.</p>
+            </div>
+            <div className="flex flex-wrap gap-2.5 pt-1">
+              {(categoryAssetTypes[selectedCategory] || []).map((type) => {
+                const isSelected = selectedAssetType === type;
+                return (
+                  <button
+                    key={type}
+                    onClick={() => setSelectedAssetType(type)}
+                    className={`px-4 py-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-sm active:scale-95 duration-150 ${
+                      isSelected
+                        ? "bg-[#5cb85c] border-[#5cb85c] text-white"
+                        : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    {type}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
           {/* Interactive Horizontal Strip Chart */}
           <div className="bg-white p-6 border border-gray-200 rounded-2xl shadow-sm flex flex-col space-y-4">
