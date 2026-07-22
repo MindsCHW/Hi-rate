@@ -128,6 +128,28 @@ const UserManagementPage = () => {
     }
 
     if (editingUserId) {
+      // Find the user's original role first to check if they are changing from User to SPV/Administrator
+      const originalUser = users.find(u => u.email === editingUserId);
+      const isRoleChangingFromUser = originalUser && 
+        originalUser.role.toLowerCase() === 'user' && 
+        formData.role.toLowerCase() !== 'user';
+
+      if (isRoleChangingFromUser) {
+        // Retrieve assignments to check if this user has unfinished tasks
+        const savedAssignments = localStorage.getItem('hirate-assignments');
+        const assignments = savedAssignments ? JSON.parse(savedAssignments) : [];
+        
+        const hasActiveTasks = assignments.some(a => 
+          a.userName.toLowerCase() === originalUser.name.toLowerCase() && 
+          a.status !== 'Completed'
+        );
+        
+        if (hasActiveTasks) {
+          setErrorMessage('Cannot change role. This user has active task assignments. Please reassign or complete their tasks first.');
+          return;
+        }
+      }
+
       // EDIT MODE: Update existing record
       setUsers(prev => prev.map(u => u.email === editingUserId ? {
         ...u,

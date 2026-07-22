@@ -121,10 +121,10 @@ const NotificationPage = () => {
   const [userPage, setUserPage] = useState(1);
   const USERS_PER_PAGE = 5;
 
-  // Selected User ID state (defaults to Sravya)
+  // Selected User ID state (defaults to first user with role 'User')
   const [selectedUserId, setSelectedUserId] = useState(() => {
-    const firstUser = users[0];
-    return firstUser ? firstUser.id || firstUser.email : '1234201';
+    const firstUser = users.find(u => u.role.toLowerCase() === 'user');
+    return firstUser ? firstUser.id || firstUser.email : '';
   });
 
   const selectedEmployee = users.find(u => (u.id || u.email) === selectedUserId);
@@ -476,7 +476,7 @@ const NotificationPage = () => {
   const bulkRouteDisplayValue = bulkSelectedRouteProject ? bulkSelectedRouteProject.displayName : 'Select Route / Section';
 
   // Calculations for auto-splitting or full pages allocation
-  const activeBulkUsers = users.filter(u => u.status === 'Active');
+  const activeBulkUsers = users.filter(u => u.status === 'Active' && u.role.toLowerCase() === 'user');
   const selectedBulkUsers = activeBulkUsers.filter(u => bulkFormData.selectedUserIds.includes(u.id || u.email));
   const totalPagesNum = parseInt(bulkFormData.totalPages) || 0;
   const bulkPreviewList = [];
@@ -769,6 +769,8 @@ const NotificationPage = () => {
 
   // Filter users based on query and filters
   const filteredUsers = users.filter(user => {
+    if (user.role.toLowerCase() !== 'user') return false;
+
     const query = searchQuery.toLowerCase().trim();
     const matchesSearch = !query || 
       (user.name && user.name.toLowerCase().includes(query)) ||
@@ -792,7 +794,7 @@ const NotificationPage = () => {
   const todayDateStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }); // e.g. "21 Jul 2026"
 
   // 1. Total Users
-  const totalUsersCount = users.length;
+  const totalUsersCount = users.filter(u => u.role.toLowerCase() === 'user').length;
 
   // 2. Available Users = Active Users - Users with Assigned/In Progress/Pending tasks
   const namesWithUnfinished = new Set(
@@ -800,7 +802,7 @@ const NotificationPage = () => {
       .filter(a => a.status !== 'Completed')
       .map(a => a.userName)
   );
-  const activeUsersCount = users.filter(u => u.status === 'Active');
+  const activeUsersCount = users.filter(u => u.status === 'Active' && u.role.toLowerCase() === 'user');
   const availableUsersCount = activeUsersCount.filter(u => !namesWithUnfinished.has(u.name)).length;
 
   // 3. Assigned Today
@@ -967,8 +969,6 @@ const NotificationPage = () => {
                       className="h-10 px-3 border border-gray-200 rounded-lg text-xs bg-white text-gray-700 font-semibold focus:outline-none focus:border-blue-600 cursor-pointer shrink-0"
                     >
                       <option value="">Role: All</option>
-                      <option value="Administrator">Administrator</option>
-                      <option value="SPV">SPV</option>
                       <option value="User">User</option>
                     </select>
                   </div>
