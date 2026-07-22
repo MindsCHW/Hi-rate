@@ -1,11 +1,15 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../utils/cn';
-import { MdStarRate } from 'react-icons/md';
+import { MdStarRate, MdChevronLeft, MdChevronRight, MdClose } from 'react-icons/md';
 import { LuUsers, LuBell, LuSettings, LuLayoutDashboard, LuUserCheck } from 'react-icons/lu';
 
 const Sidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const menuItems = [
     { name: 'Dashboard', icon: LuLayoutDashboard, path: '/dashboard' },

@@ -968,6 +968,7 @@ const NotificationPage = () => {
                     >
                       <option value="">Role: All</option>
                       <option value="Administrator">Administrator</option>
+                      <option value="SPV">SPV</option>
                       <option value="User">User</option>
                     </select>
                   </div>
