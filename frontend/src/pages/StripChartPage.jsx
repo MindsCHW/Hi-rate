@@ -184,9 +184,6 @@ const StripChartPage = () => {
 
   const totalIssuesCount = filteredIssues.length;
   const criticalIssuesCount = filteredIssues.filter(i => i.severity === 'Critical').length;
-  const pendingReviewCount = filteredIssues.filter(i => i.status === 'Pending' || i.status === 'Pending Review' || i.status === 'Under Review').length;
-  const spvRatedCount = filteredIssues.filter(i => i.status === 'In Progress' || i.status === 'SPV-RATED').length;
-  const hoRatedCount = filteredIssues.filter(i => i.status === 'Completed' || i.status === 'HO-RATED').length;
   const noIssuesCount = Math.max(0, roadLengthKm - totalIssuesCount);
 
   // Close drawer and reset segment index if road or category changes
@@ -277,14 +274,10 @@ const StripChartPage = () => {
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 flex-1 max-w-2xl lg:ml-6">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 flex-1 max-w-xl lg:ml-6">
                 <div>
                   <span className="text-[10px] text-gray-400 font-bold uppercase block leading-none">Road Length</span>
                   <span className="text-sm font-bold text-gray-700 mt-1.5 block">{roadLengthKm} Km</span>
-                </div>
-                <div>
-                  <span className="text-[10px] text-gray-400 font-bold uppercase block leading-none">Current Version</span>
-                  <span className="text-sm font-bold text-gray-700 mt-1.5 block">v1.2.0</span>
                 </div>
                 <div>
                   <span className="text-[10px] text-gray-400 font-bold uppercase block leading-none">HO Status</span>
@@ -332,19 +325,23 @@ const StripChartPage = () => {
                 <button
                   disabled={currentSegmentIndex === 0}
                   onClick={() => setCurrentSegmentIndex(prev => prev - 1)}
-                  className="px-3 py-1 rounded-full bg-white hover:bg-gray-100 border border-gray-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-95 flex items-center gap-1"
+                  className="px-3.5 py-1.5 rounded-full bg-white hover:bg-gray-100 border border-gray-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-95 flex items-center gap-1 shadow-sm"
                 >
-                  ◀ Previous
+                  Previous
                 </button>
-                <span className="text-gray-600 font-bold min-w-[90px] text-center">
-                  Segment {currentSegmentIndex + 1} / {totalSegments}
-                </span>
+                
+                {currentSegmentIndex >= totalSegments - 1 && (
+                  <span className="text-red-500 font-extrabold text-[10px] uppercase tracking-wider px-2 border-x border-red-200/50 animate-pulse">
+                    End of Road Reached
+                  </span>
+                )}
+
                 <button
                   disabled={currentSegmentIndex >= totalSegments - 1}
                   onClick={() => setCurrentSegmentIndex(prev => prev + 1)}
-                  className="px-3 py-1 rounded-full bg-white hover:bg-gray-100 border border-gray-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-95 flex items-center gap-1"
+                  className="px-3.5 py-1.5 rounded-full bg-white hover:bg-gray-100 border border-gray-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-95 flex items-center gap-1 shadow-sm"
                 >
-                  Next ▶
+                  Next
                 </button>
               </div>
             </div>
@@ -360,8 +357,8 @@ const StripChartPage = () => {
                   </div>
                   <span className="text-blue-400">Road Project: {selectedRoad} ({selectedCategory})</span>
                   <div>
-                    <span className="text-gray-500 font-bold mr-1">Page:</span>
-                    <span>{currentSegmentIndex + 1} of {totalSegments}</span>
+                    <span className="text-gray-500 font-bold mr-1">Road Length:</span>
+                    <span className="text-gray-300">{roadLengthKm} Km</span>
                   </div>
                 </div>
 
@@ -450,7 +447,7 @@ const StripChartPage = () => {
               <p className="text-xs text-gray-400 mt-0.5">Quick overview of all recorded issues for the selected Project and Category.</p>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {/* Total Issues */}
               <div className="bg-slate-50/50 border border-slate-200 rounded-2xl p-4 flex flex-col relative overflow-hidden group hover:shadow-md transition-shadow">
                 <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Total Issues</span>
@@ -463,27 +460,6 @@ const StripChartPage = () => {
                 <span className="text-[10px] text-red-500 font-bold uppercase tracking-wider">Critical Issues</span>
                 <span className="text-2xl font-extrabold text-red-600 mt-2">{criticalIssuesCount}</span>
                 <div className="absolute -bottom-4 -right-4 w-12 h-12 bg-red-200/20 rounded-full" />
-              </div>
-
-              {/* Pending Review */}
-              <div className="bg-amber-50/40 border border-amber-100 rounded-2xl p-4 flex flex-col relative overflow-hidden group hover:shadow-md transition-shadow">
-                <span className="text-[10px] text-amber-500 font-bold uppercase tracking-wider">Pending Review</span>
-                <span className="text-2xl font-extrabold text-amber-600 mt-2">{pendingReviewCount}</span>
-                <div className="absolute -bottom-4 -right-4 w-12 h-12 bg-amber-200/20 rounded-full" />
-              </div>
-
-              {/* SPV Rated */}
-              <div className="bg-purple-50/40 border border-purple-100 rounded-2xl p-4 flex flex-col relative overflow-hidden group hover:shadow-md transition-shadow">
-                <span className="text-[10px] text-purple-500 font-bold uppercase tracking-wider">SPV Rated</span>
-                <span className="text-2xl font-extrabold text-purple-600 mt-2">{spvRatedCount}</span>
-                <div className="absolute -bottom-4 -right-4 w-12 h-12 bg-purple-200/20 rounded-full" />
-              </div>
-
-              {/* HO Rated */}
-              <div className="bg-emerald-50/40 border border-emerald-100 rounded-2xl p-4 flex flex-col relative overflow-hidden group hover:shadow-md transition-shadow">
-                <span className="text-[10px] text-emerald-500 font-bold uppercase tracking-wider">HO Rated</span>
-                <span className="text-2xl font-extrabold text-emerald-600 mt-2">{hoRatedCount}</span>
-                <div className="absolute -bottom-4 -right-4 w-12 h-12 bg-emerald-200/20 rounded-full" />
               </div>
 
               {/* No Issues */}
