@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { dummyData } from '../data/ratingData';
-import { ResponsiveContainer, ComposedChart, Bar, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
+import { ResponsiveContainer, ComposedChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
 import { MdTrendingUp, MdFilterList, MdOutlineInfo, MdClose, MdWarning, MdArrowForward } from 'react-icons/md';
 
 const categories = [
@@ -16,57 +17,60 @@ const categories = [
   "Landscaping"
 ];
 
-const categoryAssetTypes = {
-  "Roadway": ["Kerb", "Drainage", "Shoulder", "Embankment", "Pavement", "Vegetation"],
-  "Road Signage and Furniture": ["Pavement Markings", "Traffic Signs", "Blinkers", "Lighting", "Delineators", "Hectometer Stones", "MBCB"],
-  "Project Facilities": ["Bus Bay", "Toilet Block", "Truck Lay-by"],
-  "Structures": ["Major Bridge", "Minor Bridge", "Culvert", "ROB"],
-  "ATMS": ["VMS", "MET", "PTZ", "AVCC", "Incident Camera"],
-  "TMS": ["SWB", "WIM", "LPIC", "Traffic Lights", "UFD", "OHLS", "UI"],
-  "Landscaping": ["Vegetation", "Lawn", "Trees"]
-};
-
-// Pre-seeded specific issue data for some main roads
+// Pre-seeded issues for main projects
 const roadIssuesData = {
   APFI: [
-    { id: 'issue-1', road: 'APFI', chainage: 12.4, title: 'Major Pothole on MCW', category: 'Roadway', severity: 'Critical', reportedBy: 'Ravi Kumar', dateReported: '2026-07-14', description: 'Deep pothole detected on the Main Carriage Way LHS. Immediate patching required to prevent vehicle damage.', images: ['https://images.unsplash.com/photo-1515162305285-0293e4767cc2?auto=format&fit=crop&w=800&q=80', 'https://images.unsplash.com/photo-1584467541268-b040f83be3fd?auto=format&fit=crop&w=800&q=80'] },
-    { id: 'issue-2', road: 'APFI', chainage: 45.8, title: 'Faded Pavement Markings', category: 'Road Signage and Furniture', severity: 'Minor', reportedBy: 'Anil Kumar', dateReported: '2026-07-15', description: 'Center line striping faded over a 500m stretch. Re-striping required for night visibility.', images: ['https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80'] },
-    { id: 'issue-3', road: 'APFI', chainage: 89.1, title: 'Damaged Drainage Gutter', category: 'Roadway', severity: 'Major', reportedBy: 'Priyanshu Sharma', dateReported: '2026-07-16', description: 'Side drainage concrete cracked and blocked with silt, causing water accumulation on the shoulder.', images: ['https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=800&q=80'] },
-    { id: 'issue-4', road: 'APFI', chainage: 120.3, title: 'Damaged Speed Limit Sign', category: 'Road Signage and Furniture', severity: 'Moderate', reportedBy: 'Amit Singh', dateReported: '2026-07-18', description: 'Speed limit (80 km/h) signboard bent due to wind/accident. Needs replacement.', images: ['https://images.unsplash.com/photo-1596700779782-b7e2898dbf2e?auto=format&fit=crop&w=800&q=80'] },
-    { id: 'issue-5', road: 'APFI', chainage: 142.7, title: 'Vegetation Overgrowth on Shoulder', category: 'Landscaping', severity: 'Minor', reportedBy: 'Ravi Kumar', dateReported: '2026-07-19', description: 'Wild grass blocking view of the edge markers on RHS shoulder.', images: ['https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=800&q=80'] }
+    // Roadway Category Issues
+    { id: 'issue-1', road: 'APFI', chainage: 12.4, assetType: 'Pavement', subCategory: 'Pothole', title: 'Major Pothole on MCW', category: 'Roadway', severity: 'Critical', reportedBy: 'Ravi Kumar', dateReported: '2026-07-14', description: 'Deep pothole detected on the Main Carriage Way LHS. Immediate patching required to prevent vehicle damage.', status: 'Pending', images: ['https://images.unsplash.com/photo-1515162305285-0293e4767cc2?auto=format&fit=crop&w=800&q=80'] },
+    { id: 'issue-2', road: 'APFI', chainage: 35.8, assetType: 'Shoulder', subCategory: 'Edge Break', title: 'Shoulder Edge Break', category: 'Roadway', severity: 'Major', reportedBy: 'Anil Kumar', dateReported: '2026-07-15', description: 'Shoulder edge damage detected. Needs gravel replenishment and compacting.', status: 'In Progress', images: ['https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80'] },
+    { id: 'issue-3', road: 'APFI', chainage: 82.1, assetType: 'Drainage', subCategory: 'Blocked Drain', title: 'Clogged Side Drain', category: 'Roadway', severity: 'Major', reportedBy: 'Priyanshu Sharma', dateReported: '2026-07-16', description: 'Side drainage concrete cracked and blocked with silt, causing water accumulation on the shoulder.', status: 'Pending', images: ['https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=800&q=80'] },
+    { id: 'issue-4', road: 'APFI', chainage: 118.6, assetType: 'Kerb', subCategory: 'Broken Kerb', title: 'Broken Concrete Kerb', category: 'Roadway', severity: 'Moderate', reportedBy: 'Amit Singh', dateReported: '2026-07-18', description: 'Kerb stones damaged due to vehicle scraping near the median.', status: 'Under Review', images: ['https://images.unsplash.com/photo-1596700779782-b7e2898dbf2e?auto=format&fit=crop&w=800&q=80'] },
+    { id: 'issue-5', road: 'APFI', chainage: 156.2, assetType: 'Vegetation', subCategory: 'Overgrown Grass', title: 'Overgrown Median Vegetation', category: 'Roadway', severity: 'Minor', reportedBy: 'Ravi Kumar', dateReported: '2026-07-19', description: 'Wild grass blocking view of the edge markers on RHS shoulder.', status: 'Completed', images: ['https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=800&q=80'] },
+    
+    // Road Signage & Furniture Category Issues
+    { id: 'issue-6', road: 'APFI', chainage: 24.5, assetType: 'Traffic Sign', subCategory: 'Damaged Signboard', title: 'Bent Speed Limit Sign', category: 'Road Signage and Furniture', severity: 'Moderate', reportedBy: 'Ravi Kumar', dateReported: '2026-07-14', description: 'Speed limit sign post bent due to wind/accident. Needs replacement.', status: 'Pending', images: ['https://images.unsplash.com/photo-1596700779782-b7e2898dbf2e?auto=format&fit=crop&w=800&q=80'] },
+    { id: 'issue-7', road: 'APFI', chainage: 68.2, assetType: 'Blinker', subCategory: 'Missing Reflector', title: 'Missing Solar Blinker Reflector', category: 'Road Signage and Furniture', severity: 'Major', reportedBy: 'Anil Kumar', dateReported: '2026-07-15', description: 'Solar blinker light missing reflective sheeting and batteries are exhausted.', status: 'Pending', images: ['https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80'] },
+    { id: 'issue-8', road: 'APFI', chainage: 109.4, assetType: 'Delineator', subCategory: 'Broken Delineator', title: 'Broken Curve Delineator Post', category: 'Road Signage and Furniture', severity: 'Minor', reportedBy: 'Anil Kumar', dateReported: '2026-07-16', description: 'Reflective delineator post snapped near the base at the highway exit.', status: 'Completed', images: ['https://images.unsplash.com/photo-1542281286-9e0a16bb7366?auto=format&fit=crop&w=800&q=80'] },
+    { id: 'issue-9', road: 'APFI', chainage: 152.7, assetType: 'Lighting', subCategory: 'Pole Tilted', title: 'Tilted High-Mast Light Pole', category: 'Road Signage and Furniture', severity: 'Critical', reportedBy: 'Kiran Reddy', dateReported: '2026-07-18', description: 'High mast light pole tilted slightly after storm. Immediate inspection and structural anchoring required.', status: 'Pending', images: ['https://images.unsplash.com/photo-1515162305285-0293e4767cc2?auto=format&fit=crop&w=800&q=80'] }
   ],
   DATI: [
-    { id: 'issue-6', road: 'DATI', chainage: 8.2, title: 'Severe Rutting in Wheel Paths', category: 'Roadway', severity: 'Critical', reportedBy: 'Kiran Reddy', dateReported: '2026-07-10', description: 'Rutting depth exceeds 20mm in the left wheel path of MCW lane 1. High hydroplaning risk during rain.', images: ['https://images.unsplash.com/photo-1515162305285-0293e4767cc2?auto=format&fit=crop&w=800&q=80'] },
-    { id: 'issue-7', road: 'DATI', chainage: 56.4, title: 'Clogged Toll Lane Drainage', category: 'Project Facilities', severity: 'Major', reportedBy: 'Anil Kumar', dateReported: '2026-07-12', description: 'Drainage pit at Toll Plaza Lane 4 completely blocked, leading to localized flooding during storms.', images: ['https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=800&q=80'] },
-    { id: 'issue-8', road: 'DATI', chainage: 112.9, title: 'Missing Chevron Signs at Curve', category: 'Road Signage and Furniture', severity: 'Critical', reportedBy: 'Pooja Patel', dateReported: '2026-07-14', description: 'Three chevron alignment signs missing at a sharp curve on RHS. Critical safety hazard.', images: ['https://images.unsplash.com/photo-1596700779782-b7e2898dbf2e?auto=format&fit=crop&w=800&q=80'] }
+    { id: 'issue-10', road: 'DATI', chainage: 8.2, assetType: 'Pavement', subCategory: 'Severe Rutting', title: 'Severe Rutting in Wheel Paths', category: 'Roadway', severity: 'Critical', reportedBy: 'Kiran Reddy', dateReported: '2026-07-10', description: 'Rutting depth exceeds 20mm in the left wheel path of MCW lane 1. High hydroplaning risk.', status: 'Pending', images: ['https://images.unsplash.com/photo-1515162305285-0293e4767cc2?auto=format&fit=crop&w=800&q=80'] },
+    { id: 'issue-11', road: 'DATI', chainage: 56.4, assetType: 'Project Facilities', subCategory: 'Clogged Toll Lane Drainage', title: 'Clogged Toll Plaza Lane 4 Drainage', category: 'Project Facilities', severity: 'Major', reportedBy: 'Anil Kumar', dateReported: '2026-07-12', description: 'Drainage pit at Toll Plaza Lane 4 completely blocked, leading to localized flooding during storms.', status: 'In Progress', images: ['https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=800&q=80'] },
+    { id: 'issue-12', road: 'DATI', chainage: 112.9, assetType: 'Road Signage and Furniture', subCategory: 'Missing Chevron Signs', title: 'Missing Chevron Curve Signs', category: 'Road Signage and Furniture', severity: 'Critical', reportedBy: 'Pooja Patel', dateReported: '2026-07-14', description: 'Three chevron alignment signs missing at a sharp curve on RHS. Critical safety hazard.', status: 'Pending', images: ['https://images.unsplash.com/photo-1596700779782-b7e2898dbf2e?auto=format&fit=crop&w=800&q=80'] }
   ]
 };
 
-// Dynamic issue generator for other projects to assure automatic data updates
+// Seed-based dynamic generator for other road sections
 const getRoadIssues = (roadName) => {
   if (roadIssuesData[roadName]) return roadIssuesData[roadName];
   
   const seed = roadName.charCodeAt(0) + (roadName.charCodeAt(1) || 0);
-  const categoriesList = ["Roadway", "Road Signage and Furniture", "Project Facilities", "Landscaping", "Structures", "ATMS"];
+  const categoriesList = ["Roadway", "Road Signage and Furniture", "Project Facilities", "Landscaping", "Structures", "ATMS", "TMS"];
+  
+  const assetTypesMap = {
+    "Roadway": ["Pavement", "Shoulder", "Drainage", "Kerb", "Vegetation"],
+    "Road Signage and Furniture": ["Traffic Sign", "Blinker", "Delineator", "Lighting", "MBCB"],
+    "Project Facilities": ["Bus Bay", "Toilet Block", "Truck Lay-by"],
+    "Structures": ["Major Bridge", "Minor Bridge", "Culvert"],
+    "ATMS": ["VMS", "MET", "PTZ"],
+    "TMS": ["SWB", "WIM", "LPIC"],
+    "Landscaping": ["Vegetation", "Lawn"]
+  };
+  
+  const subCategoriesMap = {
+    "Pavement": ["Pothole", "Rutting", "Cracks"],
+    "Shoulder": ["Edge Break", "Erosion"],
+    "Drainage": ["Blocked Drain", "Siltation"],
+    "Kerb": ["Broken Kerb", "Disalignment"],
+    "Vegetation": ["Overgrown Grass", "Branch Obstruction"],
+    "Traffic Sign": ["Damaged Signboard", "Faded Reflector"],
+    "Blinker": ["Missing Reflector", "Power Failure"],
+    "Delineator": ["Broken Delineator", "Missing Post"],
+    "Lighting": ["Pole Tilted", "Bulb Blown"],
+    "MBCB": ["Damaged Guardrail", "Loose Bolts"]
+  };
+
   const severities = ["Critical", "Major", "Moderate", "Minor"];
-  const titles = [
-    "Pavement Cracking detected",
-    "Damaged Signboard near shoulder",
-    "Drainage Gutter blocked",
-    "Missing delineator posts",
-    "Debris on Main Carriage Way",
-    "Toll booth intercom malfunction",
-    "Emergency telephone out of order"
-  ];
-  const descriptions = [
-    "Localized cracking on LHS lane 2. Requires preventive sealing.",
-    "Road sign bent or missing. Needs immediate inspection and replacement.",
-    "Silt and debris clogging drainage path, potential water accumulation hazard.",
-    "Reflective delineators missing along the sharp curve. Night hazard.",
-    "Heavy debris / trash on pavement. Needs sweep patrol dispatch.",
-    "Intercom system at toll lane disconnected, causing delay in ticket processing.",
-    "SOS call box failed to connect to control center during diagnostic check."
-  ];
   const images = [
     "https://images.unsplash.com/photo-1515162305285-0293e4767cc2?auto=format&fit=crop&w=800&q=80",
     "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=800&q=80",
@@ -76,18 +80,26 @@ const getRoadIssues = (roadName) => {
   const generated = [];
   const numIssues = 4 + (seed % 4);
   for (let i = 0; i < numIssues; i++) {
-    const idx = (seed + i) % titles.length;
-    const chainage = +((i + 1) * 22 + (seed % 10) + (i * 1.5)).toFixed(1);
+    const category = categoriesList[(seed + i) % categoriesList.length];
+    const assetTypeList = assetTypesMap[category] || ["Pavement"];
+    const assetType = assetTypeList[(seed + i) % assetTypeList.length];
+    const subCategoryList = subCategoriesMap[assetType] || ["Routine Defect"];
+    const subCategory = subCategoryList[(seed + i) % subCategoryList.length];
+    const chainage = +((i + 1) * 20 + (seed % 10) + (i * 1.5)).toFixed(1);
+    
     generated.push({
       id: `issue-gen-${roadName}-${i}`,
       road: roadName,
       chainage,
-      title: titles[idx],
-      category: categoriesList[(seed + i) % categoriesList.length],
+      assetType,
+      subCategory,
+      title: `${assetType} ${subCategory}`,
+      category,
       severity: severities[(seed + i) % severities.length],
       reportedBy: i % 2 === 0 ? 'Ravi Kumar' : 'Anil Kumar',
       dateReported: `2026-07-${10 + (i * 2)}`,
-      description: descriptions[idx],
+      description: `${assetType} has a ${subCategory} defect detected. Needs repair.`,
+      status: i % 3 === 0 ? 'Pending' : i % 3 === 1 ? 'In Progress' : 'Completed',
       images: [images[i % images.length]]
     });
   }
@@ -113,32 +125,50 @@ const generateMockChartData = (road, category) => {
   return data;
 };
 
+// Color mapping based on severity
 const severityColors = {
-  Critical: { bg: 'bg-red-500', text: 'text-red-700', border: 'border-red-200', badge: 'bg-red-50 text-red-700 border-red-100', dot: '🔴' },
-  Major: { bg: 'bg-orange-500', text: 'text-orange-700', border: 'border-orange-200', badge: 'bg-orange-50 text-orange-700 border-orange-100', dot: '🟠' },
-  Moderate: { bg: 'bg-yellow-500', text: 'text-yellow-700', border: 'border-yellow-200', badge: 'bg-yellow-50 text-yellow-700 border-yellow-100', dot: '🟡' },
-  Minor: { bg: 'bg-blue-500', text: 'text-blue-700', border: 'border-blue-200', badge: 'bg-blue-50 text-blue-700 border-blue-100', dot: '🔵' }
+  Critical: { bg: 'bg-red-500', text: 'text-red-700', border: 'border-red-200', badge: 'bg-red-50 text-red-700 border-red-100' },
+  Major: { bg: 'bg-orange-500', text: 'text-orange-700', border: 'border-orange-200', badge: 'bg-orange-50 text-orange-700 border-orange-100' },
+  Moderate: { bg: 'bg-yellow-500', text: 'text-yellow-700', border: 'border-yellow-200', badge: 'bg-yellow-50 text-yellow-700 border-yellow-100' },
+  Minor: { bg: 'bg-blue-500', text: 'text-blue-700', border: 'border-blue-200', badge: 'bg-blue-50 text-blue-700 border-blue-100' }
+};
+
+// Dynamic symbol assigner based on Asset Type
+const getAssetSymbol = (assetType) => {
+  const type = (assetType || '').toLowerCase();
+  if (type.includes('pavement') || type.includes('delineator') || type.includes('bridge') || type.includes('vms') || type.includes('swb') || type.includes('bay')) {
+    return '■'; // Square
+  }
+  if (type.includes('shoulder') || type.includes('sign') || type.includes('lay-by') || type.includes('culvert') || type.includes('met') || type.includes('wim')) {
+    return '▲'; // Triangle
+  }
+  if (type.includes('drain') || type.includes('blinker') || type.includes('guardrail') || type.includes('mbcb') || type.includes('rob') || type.includes('avcc') || type.includes('lights')) {
+    return '◆'; // Diamond
+  }
+  return '●'; // Circle (default)
+};
+
+// Dynamic background color mapping based on Asset Type
+const getAssetColor = (assetType) => {
+  const type = (assetType || '').toLowerCase();
+  if (type.includes('pavement')) return 'bg-blue-500 ring-blue-400';
+  if (type.includes('shoulder')) return 'bg-emerald-500 ring-emerald-400';
+  if (type.includes('drain')) return 'bg-amber-500 ring-amber-400';
+  if (type.includes('kerb')) return 'bg-purple-500 ring-purple-400';
+  if (type.includes('vegetation') || type.includes('lawn')) return 'bg-green-500 ring-green-400';
+  if (type.includes('sign')) return 'bg-red-500 ring-red-400';
+  if (type.includes('blinker')) return 'bg-orange-500 ring-orange-400';
+  if (type.includes('delineator')) return 'bg-sky-500 ring-sky-400';
+  if (type.includes('light')) return 'bg-yellow-500 ring-yellow-400';
+  return 'bg-pink-500 ring-pink-400';
 };
 
 const StripChartPage = () => {
+  const navigate = useNavigate();
   const [selectedRoad, setSelectedRoad] = useState(dummyData[0].roadName);
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
-  const [selectedAssetType, setSelectedAssetType] = useState(() => {
-    const types = categoryAssetTypes[categories[0]] || [];
-    return types[0] || '';
-  });
   const [selectedIssue, setSelectedIssue] = useState(null);
   const [activeImage, setActiveImage] = useState(null);
-
-  // Sync selectedAssetType when selectedCategory changes
-  useEffect(() => {
-    const types = categoryAssetTypes[selectedCategory] || [];
-    if (types.length > 0) {
-      setSelectedAssetType(types[0]);
-    } else {
-      setSelectedAssetType('');
-    }
-  }, [selectedCategory]);
 
   const activeRoadDetails = dummyData.find(d => d.roadName === selectedRoad);
   const chartData = generateMockChartData(selectedRoad, selectedCategory);
@@ -146,7 +176,7 @@ const StripChartPage = () => {
   // Retrieve issues dynamically based on selected road
   const allRoadIssues = getRoadIssues(selectedRoad);
   
-  // Filter issues displayed on strip chart by category
+  // Filter issues displayed on strip chart by category only
   const filteredIssues = allRoadIssues.filter(issue => issue.category === selectedCategory);
   
   // Calculate road length dynamically based on issues or default to a reasonable max
@@ -282,47 +312,21 @@ const StripChartPage = () => {
             </div>
           )}
 
-          {/* Selectable Asset Types Card */}
-          <div className="bg-white p-6 border border-gray-200 rounded-2xl shadow-sm flex flex-col space-y-3">
-            <div>
-              <span className="text-[10px] text-gray-400 font-bold uppercase block leading-none">Select Asset Type</span>
-              <p className="text-xs text-gray-500 mt-1">Select an asset type to inspect specific highway components and logged issues.</p>
-            </div>
-            <div className="flex flex-wrap gap-2.5 pt-1">
-              {(categoryAssetTypes[selectedCategory] || []).map((type) => {
-                const isSelected = selectedAssetType === type;
-                return (
-                  <button
-                    key={type}
-                    onClick={() => setSelectedAssetType(type)}
-                    className={`px-4 py-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-sm active:scale-95 duration-150 ${
-                      isSelected
-                        ? "bg-[#5cb85c] border-[#5cb85c] text-white"
-                        : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
-                    }`}
-                  >
-                    {type}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
           {/* Interactive Horizontal Strip Chart */}
           <div className="bg-white p-6 border border-gray-200 rounded-2xl shadow-sm flex flex-col space-y-4">
             <div>
               <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wide">Horizontal Chainage Strip Chart</h3>
-              <p className="text-xs text-gray-400 mt-0.5">Click on any marker to slide open the Right Drawer containing defect details and inspector image logs.</p>
+              <p className="text-xs text-gray-400 mt-0.5">Defect markers are plotted dynamically along the project timeline relative to their chainage.</p>
             </div>
 
             <div className="w-full overflow-x-auto pb-4 custom-scrollbar">
-              <div className="min-w-[960px] py-12 px-8 bg-slate-900 rounded-2xl border border-slate-800 relative flex flex-col items-center">
+              <div className="min-w-[960px] py-14 px-8 bg-slate-900 rounded-2xl border border-slate-800 relative flex flex-col items-center">
                 
                 {/* Length labels */}
                 <div className="w-full flex justify-between text-xs font-bold text-gray-400 mb-6 px-1">
-                  <span>Start: 0 km</span>
-                  <span className="text-blue-400">Road Section: {selectedRoad}</span>
-                  <span>End: {roadLengthKm} km</span>
+                  <span>0 Km</span>
+                  <span className="text-blue-400">Road Project: {selectedRoad} ({selectedCategory})</span>
+                  <span>{roadLengthKm} Km</span>
                 </div>
 
                 {/* Road strip container */}
@@ -334,7 +338,8 @@ const StripChartPage = () => {
                   {/* Markers plotted along relative chainage */}
                   {filteredIssues.map((issue) => {
                     const positionPercent = (issue.chainage / roadLengthKm) * 100;
-                    const configColor = severityColors[issue.severity] || severityColors.Minor;
+                    const configColor = getAssetColor(issue.assetType);
+                    const markerSymbol = getAssetSymbol(issue.assetType);
 
                     return (
                       <div
@@ -343,23 +348,24 @@ const StripChartPage = () => {
                         style={{ left: `${positionPercent}%` }}
                         className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 group cursor-pointer z-10 flex flex-col items-center"
                       >
-                        {/* Interactive pulsing Severity circular dot */}
-                        <div className={`w-8 h-8 rounded-full ${configColor.bg} ring-4 ring-white/10 flex items-center justify-center shadow-lg transition-transform hover:scale-125 duration-200 active:scale-95 relative`}>
-                          <div className={`absolute inset-0 rounded-full ${configColor.bg} animate-ping opacity-30`} />
-                          <span className="text-white text-[10px] font-extrabold">{configColor.dot}</span>
+                        {/* Interactive pulsing circular/shaped dot */}
+                        <div className={`w-8 h-8 rounded-lg ${configColor} ring-4 ring-white/10 flex items-center justify-center shadow-lg transition-transform hover:scale-125 duration-200 active:scale-95 relative`}>
+                          <div className={`absolute inset-0 rounded-lg ${configColor} animate-ping opacity-30`} />
+                          <span className="text-white text-sm font-extrabold">{markerSymbol}</span>
                         </div>
 
                         {/* Tooltip on hover */}
-                        <div className="absolute bottom-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-slate-950 text-white border border-slate-800 text-[10px] py-1 px-2.5 rounded-lg whitespace-nowrap shadow-xl pointer-events-none z-30 flex flex-col items-center">
+                        <div className="absolute bottom-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-slate-950 text-white border border-slate-800 text-[10px] py-1.5 px-3 rounded-lg whitespace-nowrap shadow-xl pointer-events-none z-30 flex flex-col items-center">
                           <span className="font-bold">{issue.title}</span>
                           <span className="text-gray-400 mt-0.5">Km {issue.chainage.toFixed(3)} • {issue.severity}</span>
                           <div className="w-2 h-2 bg-slate-950 rotate-45 absolute -bottom-1 border-r border-b border-slate-800" />
                         </div>
 
-                        {/* Bottom label */}
-                        <div className="absolute top-10 whitespace-nowrap text-center flex flex-col items-center">
-                          <span className="text-[10px] font-bold text-slate-300">Km {issue.chainage}</span>
-                          <span className="text-[9px] text-slate-400 truncate max-w-[100px] mt-0.5">{issue.title}</span>
+                        {/* Bottom label displaying dynamic issue specs inline */}
+                        <div className="absolute top-10 whitespace-nowrap text-center flex flex-col items-center leading-normal">
+                          <span className="text-[10px] font-extrabold text-slate-300">Km {issue.chainage}</span>
+                          <span className="text-[9px] font-bold text-slate-400 mt-0.5">{issue.assetType}</span>
+                          <span className="text-[8px] font-medium text-slate-500 truncate max-w-[110px]">{issue.subCategory}</span>
                         </div>
                       </div>
                     );
@@ -376,10 +382,15 @@ const StripChartPage = () => {
                 </div>
 
                 {filteredIssues.length === 0 && (
-                  <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center p-6 text-center z-20">
-                    <MdWarning className="text-amber-500 text-3xl mb-2" />
-                    <h4 className="text-sm font-bold text-white">No Issues Logged</h4>
-                    <p className="text-xs text-gray-400 mt-1">There are currently no issues reported under the category "{selectedCategory}" on road {selectedRoad}.</p>
+                  <div className="absolute inset-0 bg-slate-950/90 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center p-6 text-center z-20">
+                    <MdWarning className="text-emerald-500 text-4xl mb-2.5 animate-bounce" />
+                    <h4 className="text-base font-bold text-white">No Issues Found</h4>
+                    <p className="text-xs text-gray-400 mt-1 max-w-sm">
+                      There are currently no recorded issues for the selected Project and Category.
+                    </p>
+                    <span className="mt-3.5 px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-extrabold rounded-full">
+                      Road Status : Healthy
+                    </span>
                   </div>
                 )}
               </div>
@@ -495,12 +506,20 @@ const StripChartPage = () => {
                 {/* Details layout Grid */}
                 <div className="grid grid-cols-2 gap-x-6 gap-y-4 pt-4 border-t border-gray-100">
                   <div>
-                    <span className="text-[10px] text-gray-400 font-bold uppercase block">Asset Group</span>
-                    <span className="text-sm font-semibold text-gray-700 mt-0.5 block">{selectedIssue.category}</span>
+                    <span className="text-[10px] text-gray-400 font-bold uppercase block">Asset Type</span>
+                    <span className="text-sm font-semibold text-gray-700 mt-0.5 block">{selectedIssue.assetType}</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-gray-400 font-bold uppercase block">Sub Category</span>
+                    <span className="text-sm font-semibold text-gray-700 mt-0.5 block">{selectedIssue.subCategory}</span>
                   </div>
                   <div>
                     <span className="text-[10px] text-gray-400 font-bold uppercase block">Chainage Position</span>
                     <span className="text-sm font-semibold text-gray-700 mt-0.5 block">Km {selectedIssue.chainage.toFixed(3)}</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-gray-400 font-bold uppercase block">Status</span>
+                    <span className="text-sm font-semibold text-gray-700 mt-0.5 block">{selectedIssue.status}</span>
                   </div>
                   <div>
                     <span className="text-[10px] text-gray-400 font-bold uppercase block">Reported By</span>
@@ -514,8 +533,8 @@ const StripChartPage = () => {
                   </div>
                 </div>
 
-                {/* Description */}
-                <div className="pt-4 border-t border-gray-100">
+                {/* Remarks/Description */}
+                <div className="pt-4 border-t border-gray-150">
                   <span className="text-[10px] text-gray-400 font-bold uppercase block">Inspector Remarks</span>
                   <p className="text-xs text-gray-600 mt-2 leading-relaxed bg-gray-50 p-4 rounded-xl border border-gray-200/50">
                     {selectedIssue.description}
@@ -533,12 +552,13 @@ const StripChartPage = () => {
                 </button>
                 <button
                   onClick={() => {
-                    alert(`Navigating rating workflow to ${selectedIssue.road} Km ${selectedIssue.chainage}...`);
+                    // Navigate to existing Rating workflow for this project
+                    navigate(`/?project=${selectedRoad}`);
                     setSelectedIssue(null);
                   }}
-                  className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1.5 active:scale-95"
+                  className="flex-1 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1.5 active:scale-95 animate-pulse"
                 >
-                  <span>Resolve Issue</span>
+                  <span>Open Rating</span>
                   <MdArrowForward className="text-sm" />
                 </button>
               </div>
