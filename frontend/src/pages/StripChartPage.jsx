@@ -204,6 +204,61 @@ const StripChartPage = () => {
             )}
           </div>
 
+          {/* Road Information Card */}
+          {activeRoadDetails && (
+            <div className="bg-white p-6 border border-gray-200 rounded-2xl shadow-sm flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse" />
+                  <h2 className="text-xl font-bold text-gray-900">{selectedRoad} Details</h2>
+                </div>
+                <p className="text-xs font-semibold text-gray-700">
+                  <span className="text-gray-400 font-medium">SPV:</span> {activeRoadDetails.roadFullName.replace(/^SPV Name\s*:\s*/i, '').trim()}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 flex-1 max-w-2xl lg:ml-6">
+                <div>
+                  <span className="text-[10px] text-gray-400 font-bold uppercase block leading-none">Road Length</span>
+                  <span className="text-sm font-bold text-gray-700 mt-1.5 block">{roadLengthKm} Km</span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-gray-400 font-bold uppercase block leading-none">Current Version</span>
+                  <span className="text-sm font-bold text-gray-700 mt-1.5 block">v1.2.0</span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-gray-400 font-bold uppercase block leading-none">HO Status</span>
+                  <span className={`text-xs font-extrabold px-2.5 py-0.5 rounded-md border mt-1 block w-fit ${
+                    activeRoadDetails.status === 'HO-PROCESS' 
+                      ? 'bg-blue-50 text-blue-700 border-blue-100' 
+                      : activeRoadDetails.status === 'HO-RATED'
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
+                      : 'bg-purple-50 text-purple-700 border-purple-100'
+                  }`}>
+                    {activeRoadDetails.status}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-gray-400 font-bold uppercase block leading-none">Created Date</span>
+                  <span className="text-sm font-semibold text-gray-600 mt-1.5 block">{activeRoadDetails.dateCreated.split(',')[0]}</span>
+                </div>
+              </div>
+
+              <div className="w-full lg:w-fit flex flex-col border-t lg:border-t-0 lg:border-l border-gray-150 pt-4 lg:pt-0 lg:pl-6 shrink-0">
+                <div className="flex justify-between items-center text-xs font-bold text-gray-600 mb-1.5">
+                  <span>Inspection Progress</span>
+                  <span className="text-green-600">{60 + (selectedRoad.charCodeAt(0) % 35)}%</span>
+                </div>
+                <div className="w-full lg:w-48 h-2.5 bg-gray-150 border border-gray-200/50 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-green-500 rounded-full transition-all duration-500" 
+                    style={{ width: `${60 + (selectedRoad.charCodeAt(0) % 35)}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Interactive Horizontal Strip Chart */}
           <div className="bg-white p-6 border border-gray-200 rounded-2xl shadow-sm flex flex-col space-y-4">
             <div>
