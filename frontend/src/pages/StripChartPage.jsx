@@ -7,7 +7,6 @@ import { ResponsiveContainer, ComposedChart, Bar, Line, XAxis, YAxis, Tooltip, L
 import { MdTrendingUp, MdFilterList, MdOutlineInfo, MdClose, MdWarning, MdArrowForward } from 'react-icons/md';
 
 const categories = [
-  "Pavement",
   "Roadway",
   "Road Signage and Furniture",
   "Project Facilities",
@@ -350,7 +349,7 @@ const StripChartPage = () => {
               </div>
             </div>
 
-            {selectedCategory === 'Pavement' || selectedCategory === 'Roadway' ? (
+            {selectedCategory === 'Roadway' ? (
               <div className="w-full h-[320px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <ComposedChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
@@ -370,7 +369,7 @@ const StripChartPage = () => {
               <div className="w-full h-[320px] flex flex-col items-center justify-center border border-dashed border-gray-200 rounded-xl bg-gray-50/50 p-6 text-center">
                 <MdOutlineInfo className="text-gray-400 text-3xl mb-2" />
                 <h4 className="text-sm font-semibold text-gray-700">No distress metrics available</h4>
-                <p className="text-xs text-gray-400 mt-1 max-w-sm">Pavement distress rating profiles (Cracks, Rutting, Potholes) are only visualized for the Pavement or Roadway asset categories.</p>
+                <p className="text-xs text-gray-400 mt-1 max-w-sm">Pavement distress rating profiles (Cracks, Rutting, Potholes) are only visualized for the Roadway asset category.</p>
               </div>
             )}
           </div>
